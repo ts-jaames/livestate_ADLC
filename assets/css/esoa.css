@@ -192,7 +192,7 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   color: var(--ink-faint);
 }
 
-/* ── Next gate ── */
+/* ── The first gate ── */
 
 .gate__name {
   font-size: 13px;
@@ -218,12 +218,6 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   font-size: 13px;
   color: var(--ink-soft);
   max-width: var(--measure);
-}
-
-.gate__k {
-  display: block;
-  margin-top: 20px;
-  margin-bottom: 10px;
 }
 
 .risks {
@@ -452,17 +446,75 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   color: var(--ink-faint);
 }
 
-/* ── Planned / hop ── */
+/* ── The whole scope — census, not a sequence ── */
 
-.planned {
+.census__frame {
+  font-size: 13px;
+  color: var(--ink-soft);
+  max-width: var(--measure);
+  margin-bottom: 8px;
+}
+
+.census__summary {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+}
+
+.census {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.census__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--ink-faint);
+}
+
+.census__row.is-active {
+  color: var(--ink);
+}
+
+.census__line {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.census__area {
   font-size: 13px;
+}
+
+.census__n {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+}
+
+.census__row.is-active .census__n { color: var(--ink); }
+
+.census__bands {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.census__row.is-active .census__bands {
   color: var(--ink-muted);
 }
 
-.planned__tag,
+/* ── Hop ── */
+
 .pilot {
   font-family: var(--font-mono);
   font-size: 10.5px;
