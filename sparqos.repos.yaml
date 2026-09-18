@@ -6,7 +6,8 @@ repos:
   - name: capability-model
     owns: "Domains -> capabilities -> levels; intensity states"
     source_of_truth: "YAML in repo"
-    contract: "https://<published-pages-or-raw-url>/capability-model.yaml   # TODO: fill in"
+    # Contract pointer only — not an import. Pages has no single capability-model.yaml.
+    contract: "https://ts-jaames.github.io/capability-model/"
     confidence: real
 
   - name: sparqos-evidence          # this repo
