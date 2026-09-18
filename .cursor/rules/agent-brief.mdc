@@ -1,0 +1,26 @@
+---
+description: Pin AGENT_BRIEF.md — standing goal, repo rules, and milestone list. Always on.
+alwaysApply: true
+---
+
+@AGENT_BRIEF.md
+
+Work the milestones in `AGENT_BRIEF.md`, **one PR each**. Do not bundle.
+
+## Non-negotiables
+
+1. Single source of truth is `data/register.csv`. Never invent, reword, re-score, or add risks. If something is missing, surface it in the PR description — do not fabricate it into the data. Every rendered item must trace to a register row by `ID`.
+2. Views read from the source. They are not independent truth. Editing `register.csv` must propagate to every view with no other change.
+3. Client-facing discipline. The client experience renders ONLY rows where `Client view = Y`, and shows ONLY the `Client label` text. Internal columns, internal IDs, and internal vocabulary never reach the client surface.
+4. Confidence honesty. Render `Status` as-is. Never simulate progress. Empty "Proven" and "Committed" columns are correct. Do not add flourish that implies more certainty than the data holds.
+5. Traceability over polish. A clean, incomplete view beats a complete-looking fabricated one.
+
+## Overbuild line — do NOT build yet
+
+- No auth, accounts, database, ingestion pipeline, or live-state automation.
+- No in-place editing UI until the read views are validated in real use.
+- No capability-model data integration — stub the manifest reference only.
+- No new risks, states, or columns beyond the data contract.
+- `live-state` and `spot` are tagged direction — do not wire.
+
+ESOA (https://esoa.vercel.app) is a behavior reference, not an asset source. Match behaviors and feel; do not scrape assets.
