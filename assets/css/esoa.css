@@ -160,11 +160,6 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-muted);
-}
-
-.reading.is-loadbearing .reading__band,
-.reading.is-loadbearing .reading__pct {
   color: var(--accent);
 }
 
@@ -192,10 +187,68 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   color: var(--ink-faint);
 }
 
+.footing-tip {
+  position: relative;
+  display: inline;
+  margin-left: 10px;
+}
+
+.footing-tip__btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  cursor: help;
+}
+
+.footing-tip__btn:hover,
+.footing-tip__btn:focus-visible {
+  color: var(--accent);
+}
+
+.footing-tip__copy {
+  display: none;
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  top: calc(100% + 8px);
+  width: min(46ch, 70vw);
+  padding: 12px 14px;
+  background: #242424;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+.footing-tip:hover .footing-tip__copy,
+.footing-tip:focus-within .footing-tip__copy {
+  display: block;
+}
+
 /* ── The first gate ── */
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.25;
+}
 
 .gate__name {
   font-size: 13px;
+  font-weight: 600;
   color: var(--ink);
 }
 
@@ -203,19 +256,9 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   color: var(--ink-muted);
 }
 
-.gate__meta {
-  display: inline-block;
-  margin-left: 8px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
 .gate__unlocks {
-  margin-top: 10px;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.3;
   color: var(--ink-soft);
   max-width: var(--measure);
 }
@@ -235,11 +278,19 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   max-width: var(--measure);
 }
 
-.risk__tick {
+.risk__mark {
   flex: none;
-  width: 8px;
+  width: 6px;
   height: 1px;
   margin-top: 0.55em;
+  background: var(--rule-strong);
+}
+
+.risk.is-active .risk__mark {
+  width: 6px;
+  height: 6px;
+  margin-top: 0.35em;
+  border-radius: 50%;
   background: var(--accent);
 }
 
@@ -271,13 +322,6 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--ink-muted);
-}
-
-.fig__src {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  color: var(--ink-faint);
 }
 
 .fig__note {
@@ -452,27 +496,20 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   font-size: 13px;
   color: var(--ink-soft);
   max-width: var(--measure);
-  margin-bottom: 8px;
-}
-
-.census__summary {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  color: var(--ink-faint);
   margin-bottom: 20px;
 }
 
 .census {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
 }
 
 .census__row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 1px;
+  line-height: 1.25;
   color: var(--ink-faint);
 }
 
@@ -487,8 +524,9 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   gap: 16px;
 }
 
-.census__area {
+.census__name {
   font-size: 13px;
+  font-weight: 600;
 }
 
 .census__n {
@@ -499,6 +537,15 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   color: inherit;
 }
 
+.census__unit {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-faint);
+}
+
 .census__row.is-active .census__n { color: var(--ink); }
 
 .census__bands {
@@ -506,10 +553,22 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   font-size: 10.5px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  line-height: 1.25;
   color: var(--ink-faint);
 }
 
 .census__row.is-active .census__bands {
+  color: var(--ink-muted);
+}
+
+.census__areas {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ink-faint);
+  max-width: var(--measure);
+}
+
+.census__row.is-active .census__areas {
   color: var(--ink-muted);
 }
 

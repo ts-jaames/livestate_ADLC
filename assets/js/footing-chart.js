@@ -47,8 +47,6 @@ function FootingFigure(host) {
 
   var head = tag("div", "fig__head");
   head.appendChild(tag("span", "fig__k", "Footing over time"));
-  this.src = tag("span", "fig__src", "provisional");
-  head.appendChild(this.src);
   host.appendChild(head);
 
   var note = tag("div", "fig__note");

@@ -1,6 +1,6 @@
 {
-  "name": "",
+  "gate": "Define",
   "unlocks": "",
   "provisional": true,
-  "owner_to_set": ["name", "unlocks"]
+  "owner_to_set": ["unlocks"]
 }
