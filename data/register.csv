@@ -1,44 +1,52 @@
-ID,Area,Risk,Clarifying statement,Type,Collapse,Uncertainty,Test effort,Priority cue,Status,Client view,Client label
-H1,Sales→Delivery handoff,No structured channel from solutions to delivery,"If context gathered during the sale isn't handed over, delivery rebuilds it and discovery restarts from zero.",Operational,High,Medium,Low,Watch / manage,Undefined,Y,Context carries from sales into delivery
-H2,Sales→Delivery handoff,Solutions-stage risks/assumptions aren't captured in an inheritable form,Early risk signal surfaced pre-sale is lost at the handoff and must be rediscovered.,Operational,High,Medium,Low,Watch / manage,Undefined,N,
-H3,Sales→Delivery handoff,Commercial commitments aren't linked to their confidence basis,Delivery inherits scope/price promises the evidence doesn't yet support.,Value,High,Medium,Low,Watch / manage,Undefined,N,
-H4,Sales→Delivery handoff,No defined engagement start (sale vs kickoff),"Evidence capture begins late, missing the richest early context.",Operational,Medium,Medium,Low,,Undefined,N,
-D1,Discovery,"Discovery produces narrative, not testable assumptions",Build begins on unvalidated ground; nothing can be checked.,Usability,High,High,Low,Attack first,Undefined,Y,"Discovery produces testable assumptions, not just narrative"
-D2,Discovery,Highest-risk assumptions aren't identified first,Effort goes to low-risk areas while collapse risks stay untested.,Operational,High,Medium,Low,Watch / manage,Undefined,N,
-D3,Discovery,No confidence gate defined for discovery→build,"Work advances because time passed, not because uncertainty dropped.",Operational,High,Medium,Low,Watch / manage,Undefined,Y,A confidence gate governs discovery to build
-D4,Discovery,Discovery scope is unbounded (tries to define the whole system),Over-definition — the classic traditional-discovery failure.,Usability,Medium,Medium,Low,,Undefined,N,
-D5,Discovery,Client expects 'discovery complete' as the deliverable,Tension with an evidence-gated exit the ADLC must reconcile.,Value,Medium,Medium,Medium,,Undefined,N,
-D6,Discovery,Engineering isn't in discovery,"Feasibility risk is deferred and surfaces late, in build.",Feasibility,High,Medium,Low,Watch / manage,Undefined,Y,Engineering validates feasibility from day one
-B1,Build,Slices become features (many assumptions per test),"False confidence, slow learning; can't attribute the signal.",Feasibility,High,Medium,Low,Watch / manage,Undefined,N,
-B2,Build,No reliability floor defined for agent-executed steps,Can't distinguish a real failure from an agent artifact.,Feasibility,High,High,Medium,Attack first,Undefined,Y,Agent-produced work meets a defined reliability bar
-B3,Build,No defined point where a human reviews agent output before it advances,Unvalidated agent work hardens into commitment.,Feasibility,High,High,Medium,Attack first,Undefined,Y,Human review before agent work advances
-B4,Build,Evidence/spike code gets hardened by default,Irreversible investment before confidence is earned.,Operational,Medium,Medium,Low,,Undefined,N,
-B5,Build,No boundary between evidence-build and commitment-build,Engineers default to building; validation deprioritized.,Operational,High,Medium,Low,Watch / manage,Undefined,N,
-B6,Build,Build assumes agent tooling/infra Sparq hasn't standardized,Build steps aren't reproducible across teams.,Feasibility,Medium,Medium,Medium,,Undefined,N,
-B7,Build,Prototype fidelity read as decision maturity,Polish implies commitment; exploration gets killed.,Usability,Medium,Medium,Low,,Undefined,N,
-R1,Review & Signal,Signal isn't instrumented before a slice runs,Slices degrade into demos; confidence becomes subjective.,Operational,High,High,Low,Attack first,Undefined,Y,"Findings are measured, not just demonstrated"
-R2,Review & Signal,No explicit decision at each gate (promote/iterate/pivot/stop),Silent drift and implicit scaling.,Operational,High,Medium,Low,Watch / manage,Undefined,Y,Every gate ends in an explicit decision
-R3,Review & Signal,Confidence updates aren't recorded,Cost model and scope rest on unstated assumptions.,Operational,High,Medium,Low,Watch / manage,Undefined,N,
-R4,Review & Signal,"Review cadence is calendar-driven, not evidence-triggered","Reviews fire when nothing changed, or miss when everything did.",Usability,Medium,Medium,Low,,Undefined,N,
-R5,Review & Signal,No owner for gate discipline,Gates get skipped under delivery pressure.,Operational,Medium,High,Low,,Undefined,N,
-R6,Review & Signal,'Stop' isn't a socially permitted outcome,Failed hypotheses get quietly promoted instead of killed.,Value,High,Medium,Medium,Watch / manage,Undefined,N,
-L1,Learning loops,Evidence isn't captured in a durable substrate,Learning dies with the engagement; nothing compounds.,Operational,High,Medium,Medium,Watch / manage,Undefined,Y,What we learn is captured and carried forward
-L2,Learning loops,Decisions captured without rationale,Future teams re-litigate — the reset tax.,Operational,Medium,Medium,Low,,Undefined,N,
-L3,Learning loops,No path to feed engagement learning back into the ADLC itself,The lifecycle doesn't improve; it only runs.,Value,Medium,Medium,Medium,,Undefined,N,
-L4,Learning loops,"Handoff to delivery is static docs, not the evidence layer",Delivery can't see what's validated vs assumed.,Operational,High,Medium,Medium,Watch / manage,Undefined,N,
-T1,Tooling,No central engagement store (live state),Evidence scattered across docs/Jira/Slack/code; traceability breaks.,Operational,High,Medium,Medium,Watch / manage,Undefined,N,
-T2,Tooling,Capture is manual only,Process too heavy to sustain; teams stop logging.,Operational,Medium,High,Low,,Undefined,N,
-T3,Tooling,No retrieval surface,Captured evidence isn't usable at the moment of decision.,Operational,Medium,Medium,Medium,,Undefined,N,
-T4,Tooling,Artifact generation stays manual,Time freed by evidence-first work gets eaten by documentation.,Value,Medium,Medium,Medium,,Undefined,N,
-RC1,Roles & Comms,"Roles defined by artifact ownership, not evidence ownership",Evidence work falls to whoever holds the mental model — one person.,Usability,High,High,Medium,Attack first,Undefined,Y,Evidence has a clear owner
-RC2,Roles & Comms,No role runs confidence/gate discipline,The governing mechanism has no owner.,Operational,High,Medium,Low,Watch / manage,Undefined,N,
-RC3,Roles & Comms,Inter-function communication channels undefined,Coordination overhead replaces execution; PM becomes the single translator.,Operational,Medium,Medium,Low,,Undefined,N,
-RC4,Roles & Comms,No shared vocabulary for confidence states,Teams mean different things by 'validated'; gates become arguments.,Usability,Medium,Medium,Low,,Undefined,N,
-G1,Governance & Commercial,No stakeholder-facing progress surface for evidence work,Stakeholders demand the Gantt back; the model gets rejected.,Value,High,Medium,Medium,Watch / manage,Undefined,Y,Progress is visible without status theater
-G2,Governance & Commercial,ADLC can't run inside fixed SOW/timeline (constrained mode),A clean model that dies on contact with the contract.,Operational,High,Medium,Medium,Watch / manage,Undefined,N,
-G3,Governance & Commercial,Deliverables can't express confidence honestly,"Forced definitive language = polished fiction, the failure the system exists to prevent.",Value,High,Medium,Low,Watch / manage,Undefined,Y,Deliverables show what's proven vs. still uncertain
-G4,Governance & Commercial,Client must adopt the methodology to benefit,Adoption friction kills it; value must land without client buy-in.,Value,Medium,Medium,Medium,,Undefined,N,
-M1,Definition (meta),ADLC is a relabel of Evidence Work + SDLC,"Swap/kill: remove the label — does anything change? If not, no new object.",Value,High,High,Low,Attack first,Undefined,N,
-M2,Definition (meta),'Lifecycle' reintroduces phase/stage thinking,The frame fights the confidence-governed system it sits in.,Usability,Medium,Medium,Low,,Undefined,N,
-M3,Definition (meta),Altitude undefined (Seam vs Fabric),"Audience, language, and artifacts fork unresolvably.",Operational,High,Medium,Low,Watch / manage,Undefined,N,
-M4,Definition (meta),Running this pilot by hand won't surface tooling needs unless instrumented,Pilot yields the ADLC but not the tooling map.,Operational,Low,Medium,Low,,Undefined,N,
+ID,Area,Risk,Clarifying statement,Type,Collapse,Uncertainty,Test effort,Priority cue,Status,Altitude,Gate,Client view,Client label
+H1,Sales→Delivery handoff,No structured channel from solutions to delivery,"If context gathered during the sale isn't handed over, delivery rebuilds it and discovery restarts from zero.",Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,Y,Context carries from sales into delivery
+H2,Sales→Delivery handoff,Solutions-stage risks/assumptions aren't captured in an inheritable form,Early risk signal surfaced pre-sale is lost at the handoff and must be rediscovered.,Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,N,
+H3,Sales→Delivery handoff,Commercial commitments aren't linked to their confidence basis,Delivery inherits scope/price promises the evidence doesn't yet support.,Value,High,Medium,Low,Watch / manage,Undefined,Firm,Sell,N,
+H4,Sales→Delivery handoff,No defined engagement start (sale vs kickoff),"Evidence capture begins late, missing the richest early context.",Operational,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+D1,Discovery,"Discovery produces narrative, not testable assumptions",Build begins on unvalidated ground; nothing can be checked.,Usability,High,High,Low,Attack first,Undefined,Engagement,Run,Y,"Discovery produces testable assumptions, not just narrative"
+D2,Discovery,Highest-risk assumptions aren't identified first,Effort goes to low-risk areas while collapse risks stay untested.,Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,N,
+D3,Discovery,No confidence gate defined for discovery→build,"Work advances because time passed, not because uncertainty dropped.",Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,Y,A confidence gate governs discovery → build
+D4,Discovery,Discovery scope is unbounded (tries to define the whole system),Over-definition — the classic traditional-discovery failure.,Usability,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+D5,Discovery,Client expects 'discovery complete' as the deliverable,Tension with an evidence-gated exit the ADLC must reconcile.,Value,Medium,Medium,Medium,,Undefined,Engagement,Sell,N,
+D6,Discovery,Engineering isn't in discovery,"Feasibility risk is deferred and surfaces late, in build.",Feasibility,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,Y,Engineering validates feasibility from day one
+B1,Build,Slices become features (many assumptions per test),"False confidence, slow learning; can't attribute the signal.",Feasibility,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,N,
+B2,Build,No reliability floor defined for agent-executed steps,Can't distinguish a real failure from an agent artifact.,Feasibility,High,High,Medium,Attack first,Undefined,Firm,Run,Y,Agent-produced work meets a defined reliability bar
+B3,Build,No defined point where a human reviews agent output before it advances,Unvalidated agent work hardens into commitment.,Feasibility,High,High,Medium,Attack first,Undefined,Firm,Run,Y,Human review before agent work advances
+B4,Build,Evidence/spike code gets hardened by default,Irreversible investment before confidence is earned.,Operational,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+B5,Build,No boundary between evidence-build and commitment-build,Engineers default to building; validation deprioritized.,Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,N,
+B6,Build,Build assumes agent tooling/infra Sparq hasn't standardized,Build steps aren't reproducible across teams.,Feasibility,Medium,Medium,Medium,,Undefined,Firm,Scale,N,
+B7,Build,Prototype fidelity read as decision maturity,Polish implies commitment; exploration gets killed.,Usability,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+R1,Review & Signal,Signal isn't instrumented before a slice runs,Slices degrade into demos; confidence becomes subjective.,Operational,High,High,Low,Attack first,Undefined,Engagement,Run,Y,"Findings are measured, not just demonstrated"
+R2,Review & Signal,No explicit decision at each gate (promote/iterate/pivot/stop),Silent drift and implicit scaling.,Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,Y,Every gate ends in an explicit decision
+R3,Review & Signal,Confidence updates aren't recorded,Cost model and scope rest on unstated assumptions.,Operational,High,Medium,Low,Watch / manage,Undefined,Engagement,Run,N,
+R4,Review & Signal,"Review cadence is calendar-driven, not evidence-triggered","Reviews fire when nothing changed, or miss when everything did.",Usability,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+R5,Review & Signal,No owner for gate discipline,Gates get skipped under delivery pressure.,Operational,Medium,High,Low,,Undefined,Engagement,Run,N,
+R6,Review & Signal,'Stop' isn't a socially permitted outcome,Failed hypotheses get quietly promoted instead of killed.,Value,High,Medium,Medium,Watch / manage,Undefined,Firm,Run,N,
+L1,Learning loops,Evidence isn't captured in a durable substrate,Learning dies with the engagement; nothing compounds.,Operational,High,Medium,Medium,Watch / manage,Undefined,Firm,Scale,Y,What we learn is captured and carried forward
+L2,Learning loops,Decisions captured without rationale,Future teams re-litigate — the reset tax.,Operational,Medium,Medium,Low,,Undefined,Engagement,Scale,N,
+L3,Learning loops,No path to feed engagement learning back into the ADLC itself,The lifecycle doesn't improve; it only runs.,Value,Medium,Medium,Medium,,Undefined,Firm,Scale,N,
+L4,Learning loops,"Handoff to delivery is static docs, not the evidence layer",Delivery can't see what's validated vs assumed.,Operational,High,Medium,Medium,Watch / manage,Undefined,Engagement,Support,N,
+T1,Tooling,No central engagement store (live state),Evidence scattered across docs/Jira/Slack/code; traceability breaks.,Operational,High,Medium,Medium,Watch / manage,Undefined,Firm,Scale,N,
+T2,Tooling,Capture is manual only,Process too heavy to sustain; teams stop logging.,Operational,Medium,High,Low,,Undefined,Firm,Scale,N,
+T3,Tooling,No retrieval surface,Captured evidence isn't usable at the moment of decision.,Operational,Medium,Medium,Medium,,Undefined,Firm,Scale,N,
+T4,Tooling,Artifact generation stays manual,Time freed by evidence-first work gets eaten by documentation.,Value,Medium,Medium,Medium,,Undefined,Firm,Scale,N,
+RC1,Roles & Comms,The ADLC only runs when person X enforces it,Evidence work falls to whoever holds the mental model — one person.,Usability,High,High,Medium,Attack first,Undefined,Firm,Scale,Y,Evidence has a clear owner
+RC2,Roles & Comms,No role runs confidence/gate discipline,The governing mechanism has no owner.,Operational,High,Medium,Low,Watch / manage,Undefined,Firm,Scale,N,
+RC3,Roles & Comms,Inter-function communication channels undefined,Coordination overhead replaces execution; PM becomes the single translator.,Operational,Medium,Medium,Low,,Undefined,Engagement,Run,N,
+RC4,Roles & Comms,No shared vocabulary for confidence states,Teams mean different things by 'validated'; gates become arguments.,Usability,Medium,Medium,Low,,Undefined,Firm,Scale,N,
+G1,Governance & Commercial,No stakeholder-facing progress surface for evidence work,Stakeholders demand the Gantt back; the model gets rejected.,Value,High,Medium,Medium,Watch / manage,Undefined,Firm,Sell,Y,Progress is visible without status theater
+G2,Governance & Commercial,ADLC can't run inside fixed SOW/timeline (constrained mode),A clean model that dies on contact with the contract.,Operational,High,Medium,Medium,Watch / manage,Undefined,Firm,Sell,N,
+G3,Governance & Commercial,Deliverables can't express confidence honestly,"Forced definitive language = polished fiction, the failure the system exists to prevent.",Value,High,Medium,Low,Watch / manage,Undefined,Firm,Sell,Y,Deliverables show what's proven vs. still uncertain
+G4,Governance & Commercial,Client must adopt the methodology to benefit,Adoption friction kills it; value must land without client buy-in.,Value,Medium,Medium,Medium,,Undefined,Firm,Sell,N,
+M1,Definition (meta),ADLC is a relabel of Evidence Work + SDLC,"Swap/kill: remove the label — does anything change? If not, no new object.",Value,High,High,Low,Attack first,Undefined,Firm,Define,N,
+M2,Definition (meta),'Lifecycle' reintroduces phase/stage thinking,The frame fights the confidence-governed system it sits in.,Usability,Medium,Medium,Low,,Undefined,Firm,Define,N,
+M3,Definition (meta),Altitude undefined (Seam vs Fabric),"Audience, language, and artifacts fork unresolvably.",Operational,High,Medium,Low,Watch / manage,Undefined,Firm,Define,N,
+M4,Definition (meta),Running this pilot by hand won't surface tooling needs unless instrumented,Pilot yields the ADLC but not the tooling map.,Operational,Low,Medium,Low,,Undefined,Firm,Scale,N,
+FN1,,No per-engagement token/cost budget on agent runs,"Unbounded loops, runaway context, and recursive runs burn engagement margin before slices complete — the model loses money before it delivers.",Operational,High,High,Medium,Attack first,Undefined,Firm,Scale,N,
+CA1,,Fixed-fee/fixed-scope SOWs sold against evidence-gated delivery,"Selling a fixed scope while running confidence-gated, non-deterministic sprints risks commercial default or client rejection; contracts and gating aren't reconciled.",Value,High,High,Medium,Attack first,Undefined,Firm,Sell,N,
+D7,Discovery,Lifecycle stops at initial build delivery (no Day-2),"Ignoring prompt drift, injection/security, and eval harnesses after handoff means the client fails post-offboarding — a firm-reputation collapse, not an engagement one.",Operational,High,High,High,Cluster - decompose,Undefined,Firm,Support,N,
+B8,Definition (meta),We break a traditional step without a validated agent-native replacement,Removing a step because it 'feels outdated' — without proving what replaces it — leaves a gap in the lifecycle.,Feasibility,High,High,Medium,Attack first,Undefined,Firm,Run,N,
+M5,Definition (meta),"The value lives in AI capability itself, not in the lifecycle wrapper","If the marginal value is the model, not our lifecycle, we're building a container around value we didn't create.",Value,Medium,Medium,Low,,Undefined,Firm,Define,N,
+G5,Governance & Commercial,Stakeholders / clients can't perceive the difference the ADLC makes,No perceivable difference = no commercial or positioning value. Directly tied to the progress-surface problem below.,Value,Medium,Medium,Medium,,Undefined,Firm,Define,N,
+M6,Definition (meta),Break-from-tradition points aren't legible against the SDLC teams already know,"Under pressure, teams default back to the familiar traditional pattern.",Usability,Medium,Medium,Low,,Undefined,Firm,Define,N,
+RC5,Roles & Comms,Confidence-gating requires judgment calls teams aren't equipped to make,The discipline collapses into guesswork or gets skipped entirely.,Usability,Medium,High,Medium,,Undefined,Firm,Define,N,

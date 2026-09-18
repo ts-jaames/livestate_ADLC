@@ -27,19 +27,25 @@
           <div class="reading" id="reading">
             <span class="reading__band" id="reading-band">No footing</span>
             <span class="reading__pct" id="reading-pct">0%</span>
-            <span class="reading__flag">provisional</span>
           </div>
           <p class="confidence__note">Footing is the ground under the next commitment: whether earned confidence keeps pace with the irreversibility being taken on.</p>
-          <p class="momentum" id="momentum">In test · 0</p>
+          <p class="momentum">
+            <span id="momentum">In test · 0</span>
+            <span class="footing-tip">
+              <button type="button" class="footing-tip__btn" aria-describedby="footing-tip-copy">what is footing</button>
+              <span id="footing-tip-copy" class="footing-tip__copy" role="tooltip">Footing answers one question: have we proven enough to safely take the next step? Some steps are easy to undo. Others are expensive to reverse once you've taken them. Footing checks whether what we actually know yet is solid enough to support the step we're about to take. It's not a measure of progress — it doesn't tell you how much work is finished or how close we are to the end. It only moves when we learn something real. Meetings, deadlines, and finished documents don't move it. A low reading isn't bad news; it means we haven't proven it yet, and we'd rather say so now than find out later.</span>
+            </span>
+          </p>
         </div>
       </div>
     </section>
 
-    <section class="section" aria-label="The first gate">
-      <h2 class="section__h">The first gate</h2>
-      <p class="gate__name is-unset" id="gate-name">Owner to set</p>
-      <span class="gate__meta">provisional · owner to set</span>
-      <p class="gate__unlocks" id="gate-unlocks">Unlocks — owner to set.</p>
+    <section class="section" aria-label="The gate we are attempting">
+      <h2 class="section__h">The gate we are attempting</h2>
+      <div class="gate">
+        <p class="gate__name is-unset" id="gate-name">Owner to set</p>
+        <p class="gate__unlocks" id="gate-unlocks">Unlocks — owner to set.</p>
+      </div>
     </section>
 
     <section class="section" aria-label="In front of us now">
@@ -49,8 +55,7 @@
 
     <section class="section" aria-label="The whole scope">
       <h2 class="section__h">The whole scope</h2>
-      <p class="census__frame">All of it is mapped. Confidence decides what moves, not a calendar.</p>
-      <p class="census__summary" id="census-summary"></p>
+      <p class="census__frame">All of it is mapped. Which gate is in reach is decided by evidence, not by a calendar. <span id="census-summary"></span></p>
       <ul class="census" id="census"></ul>
     </section>
 

@@ -195,10 +195,11 @@
   </div>
   <script>
     const SOURCE = "../data/register.csv";
-    const FILTER_KEYS = ["Area", "Type", "Collapse", "Uncertainty", "Test effort", "Priority cue", "Status"];
+    const FILTER_KEYS = ["Area", "Type", "Collapse", "Uncertainty", "Test effort", "Priority cue", "Status", "Altitude", "Gate"];
     const CONTRACT_COLUMNS = [
       "ID", "Area", "Risk", "Clarifying statement", "Type", "Collapse",
-      "Uncertainty", "Test effort", "Priority cue", "Status", "Client view", "Client label"
+      "Uncertainty", "Test effort", "Priority cue", "Status", "Altitude", "Gate",
+      "Client view", "Client label"
     ];
     const SCORE_RANK = { Low: 1, Medium: 2, High: 3 };
     const STATUS_RANK = { Undefined: 1, "In test": 2, Validated: 3, Committed: 4, Parked: 5 };

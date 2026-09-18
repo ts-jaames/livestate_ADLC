@@ -11,9 +11,11 @@ const ASKS = "data/asks.csv";
 const HISTORY = "data/footing_history.csv";
 const CONTRACT_COLUMNS = [
   "ID", "Area", "Risk", "Clarifying statement", "Type", "Collapse",
-  "Uncertainty", "Test effort", "Priority cue", "Status", "Client view", "Client label"
+  "Uncertainty", "Test effort", "Priority cue", "Status", "Gate",
+  "Client view", "Client label"
 ];
 const BANDS = ["No footing", "Testing", "Partial", "Load-bearing"];
+const SCORE = { Low: 1, Medium: 2, High: 3 };
 
 const banner = document.getElementById("status-banner");
 const app = document.getElementById("app");
@@ -78,17 +80,16 @@ function fail(message) {
   banner.textContent = message;
 }
 
-function countsTowardFooting(status) {
-  return status === "Validated" || status === "Committed";
+function sameGate(a, b) {
+  return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
 }
 
-/* When register.csv gains a Gates column, gate scope and footing become
-   per-increment and fully data-driven. Until then, v1 gating risks are
-   Client view = Y AND Collapse = High AND Uncertainty = High. */
-function isGating(rec) {
-  return rec["Client view"] === "Y"
-    && rec["Collapse"] === "High"
-    && rec["Uncertainty"] === "High";
+function currentGateName(cfg) {
+  return String((cfg && cfg.gate) || "").trim();
+}
+
+function countsTowardFooting(status) {
+  return status === "Validated" || status === "Committed";
 }
 
 function derivedCue(rec) {
@@ -100,6 +101,16 @@ function derivedCue(rec) {
   }
   if (collapse === "High" && uncertainty === "High") return "Attack first";
   return rec["Priority cue"];
+}
+
+function scoreProduct(rec) {
+  return (SCORE[rec["Collapse"]] || 0) * (SCORE[rec["Uncertainty"]] || 0);
+}
+
+function byAttackOrder(a, b) {
+  const diff = scoreProduct(b) - scoreProduct(a);
+  if (diff) return diff;
+  return String(a["ID"] || "").localeCompare(String(b["ID"] || ""));
 }
 
 function bandFor(pct, inTestCount) {
@@ -125,59 +136,69 @@ function confFor(band) {
 
 function renderRisks(host, rows) {
   if (!rows.length) {
-    host.innerHTML = "<p class=\"empty\">Nothing is in front of us in the client view.</p>";
+    host.innerHTML = "<p class=\"empty\">Nothing is in front of us.</p>";
     return;
   }
   host.innerHTML = rows.map((r) => {
-    const label = r["Client label"] === ""
-      ? "<span class=\"muted\">no client label in register</span>"
-      : escapeHtml(r["Client label"]);
-    return "<li class=\"risk\" data-id=\"" + escapeHtml(r["ID"] || "") + "\">" +
-      "<span class=\"risk__tick\" aria-hidden=\"true\"></span>" +
+    const active = r["Collapse"] === "High";
+    const named = (r["Client label"] || "").trim() || (r["Risk"] || "").trim();
+    const label = named === ""
+      ? "<span class=\"muted\">no label in register</span>"
+      : escapeHtml(named);
+    return "<li class=\"risk" + (active ? " is-active" : "") + "\" data-id=\"" +
+      escapeHtml(r["ID"] || "") + "\">" +
+      "<span class=\"risk__mark\" aria-hidden=\"true\"></span>" +
       "<span class=\"risk__id\">" + escapeHtml(r["ID"] || "") + "</span>" +
       "<span>" + label + "</span></li>";
   }).join("");
 }
 
-function renderCensus(records, front) {
+function renderCensus(records, currentGate) {
   const summary = document.getElementById("census-summary");
   const host = document.getElementById("census");
-  const areas = [];
-  const byArea = {};
+  const byGate = {};
+  const areas = {};
   records.forEach((r) => {
-    const area = r["Area"];
-    if (!area) return;
-    if (!byArea[area]) {
-      byArea[area] = [];
-      areas.push(area);
+    const gate = (r["Gate"] || "").trim();
+    if (gate) {
+      if (!byGate[gate]) byGate[gate] = [];
+      byGate[gate].push(r);
     }
-    byArea[area].push(r);
+    const area = (r["Area"] || "").trim();
+    if (area) areas[area] = true;
   });
-  areas.sort(function (a, b) {
+  const gateNames = Object.keys(byGate).sort(function (a, b) {
     return a.localeCompare(b);
   });
 
-  const frontAreas = {};
-  front.forEach((r) => {
-    if (r["Area"]) frontAreas[r["Area"]] = true;
-  });
+  summary.textContent = records.length + " risks mapped across " + gateNames.length +
+    " gates and " + Object.keys(areas).length + " areas.";
 
-  summary.textContent = records.length + " risks mapped across " + areas.length +
-    " areas. " + front.length + " are in front of us now.";
-
-  host.innerHTML = areas.map((area) => {
-    const rows = byArea[area];
+  host.innerHTML = gateNames.map((gate) => {
+    const rows = byGate[gate];
     const counts = {};
     BANDS.forEach((b) => { counts[b] = 0; });
     rows.forEach((r) => { counts[bandForStatus(r["Status"])] += 1; });
-    const active = !!frontAreas[area];
+    const areaSet = {};
+    rows.forEach((r) => {
+      const area = (r["Area"] || "").trim();
+      if (area) areaSet[area] = true;
+    });
+    const areaList = Object.keys(areaSet).sort(function (a, b) {
+      return a.localeCompare(b);
+    });
+    const active = sameGate(gate, currentGate);
     const bands = BANDS.map((b) => escapeHtml(b) + " " + counts[b]).join(" · ");
     return "<li class=\"census__row" + (active ? " is-active" : "") + "\">" +
       "<div class=\"census__line\">" +
-      "<span class=\"census__area\">" + escapeHtml(area) + "</span>" +
-      "<span class=\"census__n\">" + rows.length + "</span>" +
+      "<span class=\"census__name\">" + escapeHtml(gate) + "</span>" +
+      "<span class=\"census__n\">" + rows.length +
+      " <span class=\"census__unit\">" + (rows.length === 1 ? "risk" : "risks") + "</span></span>" +
       "</div>" +
-      "<p class=\"census__bands\">" + bands + "</p>" +
+      (active ? "<p class=\"census__bands\">" + bands + "</p>" : "") +
+      (areaList.length
+        ? "<p class=\"census__areas\">" + areaList.map(escapeHtml).join(" · ") + "</p>"
+        : "") +
       "</li>";
   }).join("");
 }
@@ -220,10 +241,10 @@ function renderAsks(rows) {
 function renderGate(cfg) {
   const nameEl = document.getElementById("gate-name");
   const unlocksEl = document.getElementById("gate-unlocks");
-  const name = (cfg && cfg.name || "").trim();
+  const gate = currentGateName(cfg);
   const unlocks = (cfg && cfg.unlocks || "").trim();
-  if (name) {
-    nameEl.textContent = name;
+  if (gate) {
+    nameEl.textContent = gate;
     nameEl.classList.remove("is-unset");
   } else {
     nameEl.textContent = "Owner to set";
@@ -254,7 +275,7 @@ function renderFooting(gating) {
 }
 
 Promise.all([
-  fetch(REGISTER).then((res) => {
+  fetch(REGISTER, { cache: "no-store" }).then((res) => {
     if (!res.ok) throw new Error("HTTP " + res.status + " fetching " + REGISTER);
     return res.text();
   }),
@@ -264,13 +285,18 @@ Promise.all([
   fetch(HISTORY).then((res) => res.ok ? res.text() : "Date,Pct\n")
 ]).then(([registerText, gateCfg, decisionsText, asksText, historyText]) => {
   const records = recordsFromCsv(registerText, CONTRACT_COLUMNS);
+  const currentGate = currentGateName(gateCfg);
   const client = records.filter((r) => r["Client view"] === "Y");
-  const gating = client.filter(isGating);
-  const front = client.filter((r) => derivedCue(r) === "Attack first");
+  const gating = currentGate
+    ? client.filter((r) => sameGate(r["Gate"], currentGate))
+    : [];
+  const front = currentGate
+    ? records.filter((r) => sameGate(r["Gate"], currentGate)).slice().sort(byAttackOrder)
+    : [];
   const live = renderFooting(gating);
   renderGate(gateCfg);
   renderRisks(document.getElementById("front-risks"), front);
-  renderCensus(records, front);
+  renderCensus(records, currentGate);
   renderDecisions(recordsFromCsv(decisionsText));
   renderAsks(recordsFromCsv(asksText));
 

@@ -10,17 +10,18 @@ rubric.
 Footing is the ground under the next increment of commitment: whether earned
 confidence keeps pace with the irreversibility being taken on.
 
-## v1 scope (until a `Gates` column exists)
+## v1 scope
 
 The gating set is every register row where:
 
+- `Gate` equals the current gate in `data/next_gate.json` (`gate`)
 - `Client view = Y`
-- `Collapse = High`
-- `Uncertainty = High`
 
-That is the load-bearing set for the current next gate. When `register.csv`
-gains a `Gates` column, scope and footing become per-increment and fully
-data-driven. Do not invent gate membership before that column exists.
+Scoring (Collapse × Uncertainty) orders that set. It does not choose membership.
+A high-scoring row on a gate that is not in reach stays out.
+
+Do not invent gate membership. Empty-with-integrity is correct if no client-view
+rows sit on the current gate.
 
 ## What counts
 
