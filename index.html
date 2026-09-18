@@ -119,7 +119,7 @@
     }
     .display {
       font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 42px);
+      font-size: clamp(26px, 3.5vw, 38px);
       font-weight: 400;
       letter-spacing: -0.02em;
       line-height: 1.2;
@@ -132,11 +132,11 @@
     }
 
     .section {
-      padding: 40px 0 8px;
+      padding: 28px 0 8px;
       border-top: 1px solid var(--rule);
-      margin-top: 40px;
+      margin-top: 28px;
     }
-    .section:first-of-type { border-top: 0; margin-top: 36px; padding-top: 0; }
+    .section:first-of-type { border-top: 0; margin-top: 28px; padding-top: 0; }
     .label {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -146,24 +146,24 @@
       color: var(--ink-muted);
       margin-bottom: 14px;
     }
+    .label.follow { margin-top: 28px; }
 
     .gate {
-      margin-top: 32px;
-      padding: 22px 0 0;
-      border-top: 1px solid var(--rule);
+      margin-top: 8px;
+      padding: 0;
     }
     .gate__line {
       font-family: var(--font-display);
-      font-size: clamp(20px, 2.6vw, 28px);
+      font-size: clamp(22px, 2.8vw, 32px);
       line-height: 1.3;
       max-width: 28ch;
     }
     .gate__list {
       list-style: none;
-      padding: 18px 0 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding: 16px 0 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 28px;
     }
     .gate__list li {
       color: var(--ink);
@@ -182,7 +182,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px 18px;
-      margin-top: 18px;
+      margin: 0 0 14px;
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--ink-muted);
@@ -236,7 +236,7 @@
       font-size: 13.5px;
       line-height: 1.4;
     }
-    .item--next { border-left-color: var(--accent); background: var(--accent-wash); }
+    .item--next { border-left-color: var(--accent); }
     .empty-mark {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -335,7 +335,7 @@
       .nav__act { padding: 6px 10px; border-left: 0; border-bottom: 1px solid transparent; }
       .nav__act.is-active { border-left-color: transparent; border-bottom-color: var(--accent); }
       .stage { padding: 28px 20px 64px; }
-      .split, .loop { grid-template-columns: 1fr; }
+      .split, .loop, .gate__list { grid-template-columns: 1fr; }
       .loop__stage { border-right: 0; border-bottom: 1px solid var(--rule); padding: 16px 0; }
     }
   </style>
@@ -347,28 +347,28 @@
       <button type="button" class="nav__act is-active" data-view="rest" aria-current="true">When nothing's on fire</button>
       <button type="button" class="nav__act" data-view="change">When something changes</button>
       <button type="button" class="nav__act" data-view="lasts">What lasts</button>
-      <p class="nav__note">Surface of sight. Not a Gantt. Not a place to decide.</p>
+      <p class="nav__note">Surface of sight. Confidence, not a timeline. Not a place to decide.</p>
     </nav>
 
     <main class="stage">
       <p class="kicker">Confidence, not time</p>
-      <h1 class="display">What's proven, and what is still a bet.</h1>
-      <p class="lede">This board reads the engagement register. It does not take input, capture a decision, or invent progress.</p>
+      <h1 class="display">Nothing is proven or committed yet.</h1>
+      <p class="lede">The board reads the register. It does not take input, capture a decision, or invent progress. Empty columns are the state.</p>
 
       <div id="status-banner" class="banner">Loading <code>data/register.csv</code>…</div>
       <div id="app" hidden>
-        <section class="section" id="at-rest" data-panel="rest">
+        <section class="section" id="gate-section" data-panel="rest">
           <p class="label">The gate</p>
           <div class="gate" id="gate">
             <p class="gate__line" id="gate-headline">To justify the next increment of commitment, the ADLC must prove:</p>
             <ul class="gate__list" id="gate-list"></ul>
             <p class="gate__empty" id="gate-empty" hidden></p>
           </div>
-          <div class="meta" id="meta"></div>
         </section>
 
         <section class="section" id="board-section" data-panel="rest">
           <h2 class="label">Coverage · confidence axis</h2>
+          <div class="meta" id="meta"></div>
           <div class="board-wrap">
             <table class="board" id="board">
               <thead>
@@ -385,22 +385,19 @@
           </div>
         </section>
 
-        <section class="section" id="truth-section" data-panel="rest">
-          <div class="split">
-            <div>
-              <h2 class="label">What's true</h2>
-              <ul class="truth-list" id="truth-list"></ul>
-              <p class="empty-mark" id="truth-empty" hidden>empty</p>
-            </div>
-            <div>
-              <h2 class="label">Still a bet</h2>
-              <ul class="bet-list" id="bet-list"></ul>
-              <p class="empty-mark" id="bet-empty" hidden>empty</p>
-            </div>
-          </div>
+        <section class="section" id="truth-section" data-panel="rest lasts">
+          <h2 class="label">What's true</h2>
+          <ul class="truth-list" id="truth-list"></ul>
+          <p class="empty-mark" id="truth-empty" hidden>empty</p>
         </section>
 
-        <section class="section" id="in-change" data-panel="change" hidden>
+        <section class="section" id="bet-section" data-panel="rest">
+          <h2 class="label">Still a bet</h2>
+          <ul class="bet-list" id="bet-list"></ul>
+          <p class="empty-mark" id="bet-empty" hidden>empty</p>
+        </section>
+
+        <section class="section" id="loop-section" data-panel="change" hidden>
           <h2 class="label">The change loop · the show, not a form</h2>
           <div class="loop" id="loop">
             <article class="loop__stage">
@@ -431,8 +428,11 @@
           </div>
         </section>
 
-        <section class="section" id="what-lasts" data-panel="lasts" hidden>
-          <h2 class="label">Parked · never a progress bar</h2>
+        <section class="section" id="lasts-section" data-panel="lasts" hidden>
+          <h2 class="label">Committed</h2>
+          <p class="empty-mark" id="committed-empty">empty</p>
+          <p class="coverage-note" id="committed-note">Nothing is Committed. That is the state, not a gap to fill.</p>
+          <h2 class="label follow">Parked · never a progress bar</h2>
           <ul class="parked-list" id="parked-list"></ul>
           <p class="empty-mark" id="parked-empty" hidden>empty</p>
           <p class="coverage-note" id="parked-note"></p>
@@ -517,11 +517,6 @@
       return "<li class=\"" + cls + "\" data-client-item data-id=\"" + escapeHtml(rec["ID"] || "") + "\">" + body + "</li>";
     }
 
-    function listOrEmpty(items, extraClass) {
-      if (!items.length) return "";
-      return "<ul class=\"items\">" + items.map((r) => itemMarkup(r, extraClass)).join("") + "</ul>";
-    }
-
     function setView(view) {
       document.body.setAttribute("data-view", view);
       document.querySelectorAll(".nav__act").forEach((btn) => {
@@ -531,15 +526,19 @@
         else btn.removeAttribute("aria-current");
       });
       document.querySelectorAll("[data-panel]").forEach((el) => {
-        el.hidden = el.getAttribute("data-panel") !== view;
+        const panels = (el.getAttribute("data-panel") || "").split(/\s+/);
+        el.hidden = panels.indexOf(view) === -1;
       });
-      const hash = view === "rest" ? "#at-rest" : view === "change" ? "#in-change" : "#what-lasts";
-      if (location.hash !== hash) history.replaceState(null, "", hash);
+      const wantHash = view === "rest" ? "" : view === "change" ? "#in-change" : "#what-lasts";
+      if (location.hash !== wantHash) {
+        history.replaceState(null, "", location.pathname + location.search + wantHash);
+      }
     }
 
     function viewFromHash() {
-      if (location.hash === "#in-change") return "change";
-      if (location.hash === "#what-lasts") return "lasts";
+      const h = location.hash;
+      if (h === "#in-change") return "change";
+      if (h === "#what-lasts") return "lasts";
       return "rest";
     }
 
@@ -547,6 +546,7 @@
       btn.addEventListener("click", () => setView(btn.getAttribute("data-view")));
     });
     window.addEventListener("hashchange", () => setView(viewFromHash()));
+    setView(viewFromHash());
 
     function fail(message) {
       banner.hidden = false;
@@ -653,7 +653,7 @@
           "<p>No change event is on this surface. The register is read here; nothing is taken in.</p>";
         document.getElementById("loop-true").innerHTML = truth.length
           ? "<ul>" + truth.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("") + "</ul>"
-          : "<p class=\"empty-mark\">empty</p><p>Nothing is Validated or Committed yet. That is the state, not a gap to fill.</p>";
+          : "<p class=\"empty-mark\">empty</p><p>Nothing is Proven or Committed yet. That is the state, not a gap to fill.</p>";
         document.getElementById("loop-next").innerHTML = gateItems.length
           ? "<ul>" + gateItems.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("") + "</ul>"
           : "<p class=\"empty-mark\">empty</p>";
@@ -662,6 +662,17 @@
         document.getElementById("loop-informed").innerHTML =
           "<p>Whoever can see this board. There is no dispatch layer.</p>";
 
+        const committedNote = document.getElementById("committed-note");
+        const committedEmpty = document.getElementById("committed-empty");
+        const committedCount = client.filter((r) => r.__lane === "committed").length;
+        if (committedCount) {
+          committedEmpty.hidden = true;
+          committedNote.textContent = "";
+        } else {
+          committedEmpty.hidden = false;
+          committedNote.textContent = "Nothing is Committed. That is the state, not a gap to fill.";
+        }
+
         const parkedList = document.getElementById("parked-list");
         const parkedEmpty = document.getElementById("parked-empty");
         const parkedNote = document.getElementById("parked-note");
@@ -669,11 +680,11 @@
           parkedList.innerHTML = parked.map((r) => {
             const label = r["Client label"] === "" ? "no client label in register" : escapeHtml(r["Client label"]);
             return "<li class=\"item\" data-client-item data-id=\"" + escapeHtml(r["ID"] || "") + "\" data-lane=\"parked\">" +
-              label + "<p class=\"coverage-note\">Parked. The register has no client-facing reason column; none is invented.</p></li>";
+              label + "<p class=\"coverage-note\">Parked. The register has no client-facing reason; none is invented.</p></li>";
           }).join("");
         } else {
           parkedEmpty.hidden = false;
-          parkedNote.textContent = "None parked. If a client-visible row is Parked, it appears here with a reason — never on the confidence axis as fake progress.";
+          parkedNote.textContent = "None parked. A parked item appears here with a reason — never on the confidence axis as fake progress.";
         }
 
         banner.hidden = true;
