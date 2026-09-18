@@ -7,6 +7,18 @@ alwaysApply: true
 
 Work the milestones in `AGENT_BRIEF.md`, **one PR each**. Do not bundle.
 
+## What this pilot actually is
+
+This repo co-locates three objects for the pilot only:
+
+1. An engagement-start guardrail — a *method*.
+2. The engagement-specific live-state app — a *product*; this repo is iteration one. The register **is** live-state's data model, not an artifact hanging off it.
+3. The client ESOA — a *surface of sight*, not action. No write or decision-capture layer.
+
+Split triggers (until one fires, keep it one repo): a second engagement (live-state leaves); a real client seeing the surface (client surface leaves).
+
+Iteration one tests that **evidence stays in the one source**, not that the app renders.
+
 ## Non-negotiables
 
 1. Single source of truth is `data/register.csv`. Never invent, reword, re-score, or add risks. If something is missing, surface it in the PR description — do not fabricate it into the data. Every rendered item must trace to a register row by `ID`.
@@ -19,8 +31,9 @@ Work the milestones in `AGENT_BRIEF.md`, **one PR each**. Do not bundle.
 
 - No auth, accounts, database, ingestion pipeline, or live-state automation.
 - No in-place editing UI until the read views are validated in real use.
+- No write or decision-capture layer on the client surface.
 - No capability-model data integration — stub the manifest reference only.
 - No new risks, states, or columns beyond the data contract.
-- `live-state` and `spot` are tagged direction — do not wire.
+- Do not split the repo. Do not wire a separate live-state or spot repo.
 
 ESOA (https://esoa.vercel.app) is a behavior reference, not an asset source. Match behaviors and feel; do not scrape assets.

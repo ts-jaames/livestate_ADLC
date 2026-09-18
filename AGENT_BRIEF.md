@@ -21,6 +21,31 @@ The capability model is a **separate** repo at a different altitude — referenc
 
 ---
 
+## What this pilot actually is (read before building)
+
+This one repo is piloting **three distinct objects**, deliberately co-located for the pilot only:
+
+1. **An engagement-start guardrail** — a *method*. The "what do we know → biggest risk → where
+   priority goes" way to start any internal project. (Not every project runs full Evidence Work.)
+2. **The engagement-specific live-state app** — a *product*, of which this repo is **iteration one**.
+   The register here **is** live-state's data model: vision and direction are views of it *and*
+   generate new rows. It is the engagement's source object, not an artifact hanging off it.
+3. **The client ESOA** — a *surface*. "Engagement System of Action" is **aspirational**: today this
+   is a system of **sight** (progress / confidence / what's proven), NOT action. There is no write
+   or decision-capture layer yet. Do not build one (see Overbuild line).
+
+**Split triggers** (until one fires, keep it one repo):
+- Live-state leaves this repo the moment a **second engagement** needs it — engagement-specific
+  *content* and a reusable *app* cannot share one source of truth.
+- The client surface splits the moment it's shown to a **real client** — internal kit and client
+  surface diverge on vocabulary and confidence exposure.
+
+**What iteration one is really testing:** not that the app renders — that **evidence stays in the
+one source** and does not leak back to scattered docs. If the team drifts to side docs and Slack,
+the pilot has failed its core assumption, however good the UI looks.
+
+---
+
 ## Non-negotiable rules (obey these before any feature)
 
 1. **Single source of truth is `data/register.csv`.** Never invent, reword, re-score, or add
