@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADLC · confidence</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Client surface of sight. Confidence, not time. Not a decision layer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ground: #1a1a1a;
+      --ink: #f2efe9;
+      --ink-soft: #c8c3ba;
+      --ink-muted: #9a958c;
+      --ink-faint: #6f6b64;
+      --rule: rgba(242, 239, 233, 0.12);
+      --rule-strong: rgba(242, 239, 233, 0.22);
+      --accent: #e75437;
+      --accent-deep: #f07a62;
+      --accent-wash: rgba(231, 84, 55, 0.12);
+      --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      --font-display: "Newsreader", "Times New Roman", serif;
+      --nav-w: 220px;
+      --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+      --dur: 220ms;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :root { --dur: 1ms; }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--ground); color: var(--ink); }
+    body {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    button {
+      appearance: none;
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      text-align: left;
+    }
+    h1, h2, h3, p, ul { margin: 0; }
+    a { color: var(--accent); }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .deck {
+      display: grid;
+      grid-template-columns: var(--nav-w) minmax(0, 1fr);
+      min-height: 100dvh;
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100dvh;
+      padding: 40px 20px 32px 28px;
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav__stamp {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 28px;
+    }
+    .nav__act {
+      padding: 7px 0 7px 14px;
+      border-left: 1px solid transparent;
+      color: var(--ink-faint);
+      font-size: 13.5px;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+      transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    }
+    .nav__act:hover { color: var(--ink-soft); }
+    .nav__act.is-active {
+      color: var(--ink);
+      border-left-color: var(--accent);
+    }
+    .nav__note {
+      margin-top: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--ink-faint);
+      max-width: 18ch;
+    }
+
+    .stage {
+      min-width: 0;
+      padding: 40px 40px 80px;
+    }
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 10px;
+    }
+    .display {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      max-width: 22ch;
+    }
+    .lede {
+      margin-top: 12px;
+      color: var(--ink-soft);
+      max-width: 52ch;
+    }
+
+    .section {
+      padding: 40px 0 8px;
+      border-top: 1px solid var(--rule);
+      margin-top: 40px;
+    }
+    .section:first-of-type { border-top: 0; margin-top: 36px; padding-top: 0; }
+    .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 14px;
+    }
+
+    .gate {
+      margin-top: 32px;
+      padding: 22px 0 0;
+      border-top: 1px solid var(--rule);
+    }
+    .gate__line {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.6vw, 28px);
+      line-height: 1.3;
+      max-width: 28ch;
+    }
+    .gate__list {
+      list-style: none;
+      padding: 18px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .gate__list li {
+      color: var(--ink);
+      padding-left: 14px;
+      border-left: 1px solid var(--accent);
+      max-width: 62ch;
+    }
+    .gate__empty {
+      margin-top: 14px;
+      color: var(--ink-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 18px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+    .meta strong { color: var(--ink-soft); font-weight: 500; }
+
+    .board-wrap { overflow: auto; margin: 0 -8px; }
+    .board {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+    }
+    .board th, .board td {
+      border-bottom: 1px solid var(--rule);
+      border-right: 1px solid var(--rule);
+      vertical-align: top;
+      text-align: left;
+      padding: 12px 10px;
+    }
+    .board th:last-child, .board td:last-child { border-right: 0; }
+    .board thead th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      white-space: nowrap;
+      background: var(--ground);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .board .area {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-soft);
+      width: 18%;
+      min-width: 140px;
+      position: sticky;
+      left: 0;
+      background: var(--ground);
+    }
+    .board .lane { width: 20.5%; min-height: 72px; }
+    .board .lane--empty { background: rgba(242, 239, 233, 0.015); }
+    .items { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .item {
+      padding: 8px 10px 8px 12px;
+      border-left: 1px solid var(--rule-strong);
+      color: var(--ink);
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+    .item--next { border-left-color: var(--accent); background: var(--accent-wash); }
+    .empty-mark {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .coverage-note {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-top: 6px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 40px;
+    }
+    .truth-list, .bet-list, .parked-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .truth-list li, .bet-list li, .parked-list li {
+      padding-left: 12px;
+      border-left: 1px solid var(--rule-strong);
+      max-width: 54ch;
+    }
+    .bet-list li { border-left-color: var(--accent); }
+
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      margin-top: 8px;
+    }
+    .loop__stage {
+      padding: 8px 16px 8px 0;
+      border-right: 1px solid var(--rule);
+    }
+    .loop__stage:last-child { border-right: 0; padding-right: 0; }
+    .loop__n {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .loop__h {
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .loop__body {
+      color: var(--ink-soft);
+      font-size: 13.5px;
+    }
+    .loop__body ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .banner {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink-muted);
+      padding: 24px 0;
+    }
+    .banner.error { color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .deck { grid-template-columns: 1fr; }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 8px;
+        padding: 16px 20px;
+        background: var(--ground);
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .nav__stamp { margin: 0 16px 0 0; }
+      .nav__note { display: none; }
+      .nav__act { padding: 6px 10px; border-left: 0; border-bottom: 1px solid transparent; }
+      .nav__act.is-active { border-left-color: transparent; border-bottom-color: var(--accent); }
+      .stage { padding: 28px 20px 64px; }
+      .split, .loop { grid-template-columns: 1fr; }
+      .loop__stage { border-right: 0; border-bottom: 1px solid var(--rule); padding: 16px 0; }
+    }
+  </style>
+</head>
+<body data-view="rest">
+  <div class="deck">
+    <nav class="nav" aria-label="Operational conditions">
+      <p class="nav__stamp">ADLC</p>
+      <button type="button" class="nav__act is-active" data-view="rest" aria-current="true">When nothing's on fire</button>
+      <button type="button" class="nav__act" data-view="change">When something changes</button>
+      <button type="button" class="nav__act" data-view="lasts">What lasts</button>
+      <p class="nav__note">Surface of sight. Not a Gantt. Not a place to decide.</p>
+    </nav>
+
+    <main class="stage">
+      <p class="kicker">Confidence, not time</p>
+      <h1 class="display">What's proven, and what is still a bet.</h1>
+      <p class="lede">This board reads the engagement register. It does not take input, capture a decision, or invent progress.</p>
+
+      <div id="status-banner" class="banner">Loading <code>data/register.csv</code>…</div>
+      <div id="app" hidden>
+        <section class="section" id="at-rest" data-panel="rest">
+          <p class="label">The gate</p>
+          <div class="gate" id="gate">
+            <p class="gate__line" id="gate-headline">To justify the next increment of commitment, the ADLC must prove:</p>
+            <ul class="gate__list" id="gate-list"></ul>
+            <p class="gate__empty" id="gate-empty" hidden></p>
+          </div>
+          <div class="meta" id="meta"></div>
+        </section>
+
+        <section class="section" id="board-section" data-panel="rest">
+          <h2 class="label">Coverage · confidence axis</h2>
+          <div class="board-wrap">
+            <table class="board" id="board">
+              <thead>
+                <tr>
+                  <th scope="col">Area</th>
+                  <th scope="col">Unknown · mapped</th>
+                  <th scope="col">Being proven</th>
+                  <th scope="col">Proven</th>
+                  <th scope="col">Committed</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="truth-section" data-panel="rest">
+          <div class="split">
+            <div>
+              <h2 class="label">What's true</h2>
+              <ul class="truth-list" id="truth-list"></ul>
+              <p class="empty-mark" id="truth-empty" hidden>empty</p>
+            </div>
+            <div>
+              <h2 class="label">Still a bet</h2>
+              <ul class="bet-list" id="bet-list"></ul>
+              <p class="empty-mark" id="bet-empty" hidden>empty</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="in-change" data-panel="change" hidden>
+          <h2 class="label">The change loop · the show, not a form</h2>
+          <div class="loop" id="loop">
+            <article class="loop__stage">
+              <p class="loop__n">01</p>
+              <h3 class="loop__h">A change</h3>
+              <div class="loop__body" id="loop-event"></div>
+            </article>
+            <article class="loop__stage">
+              <p class="loop__n">02</p>
+              <h3 class="loop__h">What's held as true</h3>
+              <div class="loop__body" id="loop-true"></div>
+            </article>
+            <article class="loop__stage">
+              <p class="loop__n">03</p>
+              <h3 class="loop__h">Must be proven next</h3>
+              <div class="loop__body" id="loop-next"></div>
+            </article>
+            <article class="loop__stage">
+              <p class="loop__n">04</p>
+              <h3 class="loop__h">The decision</h3>
+              <div class="loop__body" id="loop-decision"></div>
+            </article>
+            <article class="loop__stage">
+              <p class="loop__n">05</p>
+              <h3 class="loop__h">Who is informed</h3>
+              <div class="loop__body" id="loop-informed"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="what-lasts" data-panel="lasts" hidden>
+          <h2 class="label">Parked · never a progress bar</h2>
+          <ul class="parked-list" id="parked-list"></ul>
+          <p class="empty-mark" id="parked-empty" hidden>empty</p>
+          <p class="coverage-note" id="parked-note"></p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const SOURCE = "data/register.csv";
+    const CONTRACT_COLUMNS = [
+      "ID", "Area", "Risk", "Clarifying statement", "Type", "Collapse",
+      "Uncertainty", "Test effort", "Priority cue", "Status", "Client view", "Client label"
+    ];
+    const LANES = ["unknown", "proving", "proven", "committed"];
+    const LANE_FROM_STATUS = {
+      "Undefined": "unknown",
+      "In test": "proving",
+      "Validated": "proven",
+      "Committed": "committed",
+      "Parked": "parked"
+    };
+
+    const banner = document.getElementById("status-banner");
+    const app = document.getElementById("app");
+
+    function parseCSV(text) {
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; }
+            else inQuotes = false;
+          } else {
+            field += c;
+          }
+          continue;
+        }
+        if (c === '"') { inQuotes = true; continue; }
+        if (c === ",") { row.push(field); field = ""; continue; }
+        if (c === "\r") continue;
+        if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; continue; }
+        field += c;
+      }
+      if (field.length || row.length) {
+        row.push(field);
+        rows.push(row);
+      }
+      return rows.filter((r) => r.some((cell) => cell !== ""));
+    }
+
+    function derivedCue(row) {
+      const collapse = row["Collapse"];
+      const uncertainty = row["Uncertainty"];
+      const effort = row["Test effort"];
+      if (collapse === "High" && uncertainty === "High" && effort === "High") return "Cluster - decompose";
+      if (collapse === "High" && uncertainty === "High") return "Attack first";
+      return row["Priority cue"];
+    }
+
+    function laneFor(status) {
+      return LANE_FROM_STATUS[status] || "unknown";
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function itemMarkup(rec, extraClass) {
+      const label = rec["Client label"];
+      const cls = "item" + (extraClass ? " " + extraClass : "");
+      const body = label === "" ? "<span class=\"empty-mark\">no client label in register</span>" : escapeHtml(label);
+      return "<li class=\"" + cls + "\" data-client-item data-id=\"" + escapeHtml(rec["ID"] || "") + "\">" + body + "</li>";
+    }
+
+    function listOrEmpty(items, extraClass) {
+      if (!items.length) return "";
+      return "<ul class=\"items\">" + items.map((r) => itemMarkup(r, extraClass)).join("") + "</ul>";
+    }
+
+    function setView(view) {
+      document.body.setAttribute("data-view", view);
+      document.querySelectorAll(".nav__act").forEach((btn) => {
+        const on = btn.getAttribute("data-view") === view;
+        btn.classList.toggle("is-active", on);
+        if (on) btn.setAttribute("aria-current", "true");
+        else btn.removeAttribute("aria-current");
+      });
+      document.querySelectorAll("[data-panel]").forEach((el) => {
+        el.hidden = el.getAttribute("data-panel") !== view;
+      });
+      const hash = view === "rest" ? "#at-rest" : view === "change" ? "#in-change" : "#what-lasts";
+      if (location.hash !== hash) history.replaceState(null, "", hash);
+    }
+
+    function viewFromHash() {
+      if (location.hash === "#in-change") return "change";
+      if (location.hash === "#what-lasts") return "lasts";
+      return "rest";
+    }
+
+    document.querySelectorAll(".nav__act").forEach((btn) => {
+      btn.addEventListener("click", () => setView(btn.getAttribute("data-view")));
+    });
+    window.addEventListener("hashchange", () => setView(viewFromHash()));
+
+    function fail(message) {
+      banner.hidden = false;
+      banner.className = "banner error";
+      banner.textContent = message;
+    }
+
+    fetch(SOURCE)
+      .then((res) => {
+        if (!res.ok) throw new Error("HTTP " + res.status + " fetching " + SOURCE);
+        return res.text();
+      })
+      .then((text) => {
+        const rows = parseCSV(text);
+        if (!rows.length) throw new Error("Register parsed to zero rows.");
+        const headers = rows[0];
+        const missingCols = CONTRACT_COLUMNS.filter((c) => !headers.includes(c));
+        if (missingCols.length) {
+          throw new Error("Register missing contracted columns: " + missingCols.join(", "));
+        }
+        const records = rows.slice(1).map((cells, index) => {
+          const rec = { __index: index };
+          headers.forEach((h, i) => { rec[h] = cells[i] ?? ""; });
+          rec.__cue = derivedCue(rec);
+          rec.__lane = laneFor(rec["Status"]);
+          return rec;
+        });
+
+        const areas = [];
+        for (const rec of records) {
+          if (rec["Area"] && !areas.includes(rec["Area"])) areas.push(rec["Area"]);
+        }
+
+        const client = records.filter((r) => r["Client view"] === "Y");
+        const proving = client.filter((r) => r["Status"] === "In test");
+        const attack = client.filter((r) => r.__cue === "Attack first");
+        const gateItems = proving.length ? proving : attack;
+        const truth = client.filter((r) => r["Status"] === "Validated" || r["Status"] === "Committed");
+        const bets = client.filter((r) => r["Status"] === "Undefined" || r["Status"] === "In test");
+        const parked = client.filter((r) => r["Status"] === "Parked");
+        const nextIds = new Set(gateItems.map((r) => r["ID"]));
+
+        const gateList = document.getElementById("gate-list");
+        const gateEmpty = document.getElementById("gate-empty");
+        if (gateItems.length) {
+          gateList.innerHTML = gateItems.map((r) => {
+            const label = r["Client label"] === "" ? "no client label in register" : escapeHtml(r["Client label"]);
+            return "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + label + "</li>";
+          }).join("");
+        } else {
+          gateList.innerHTML = "";
+          gateEmpty.hidden = false;
+          gateEmpty.textContent = "Nothing is in Being proven, and no next items are marked in the register.";
+        }
+
+        document.getElementById("meta").innerHTML =
+          "<span>Source <strong>" + escapeHtml(SOURCE) + "</strong></span>" +
+          "<span>Client-visible <strong id=\"client-count\">" + client.length + "</strong></span>" +
+          "<span>Areas on the board <strong id=\"area-count\">" + areas.length + "</strong></span>" +
+          "<span>Proven <strong id=\"proven-count\">" + client.filter((r) => r.__lane === "proven").length + "</strong></span>" +
+          "<span>Committed <strong id=\"committed-count\">" + client.filter((r) => r.__lane === "committed").length + "</strong></span>";
+
+        const tbody = document.querySelector("#board tbody");
+        tbody.innerHTML = areas.map((area) => {
+          const inArea = client.filter((r) => r["Area"] === area && r.__lane !== "parked");
+          const byLane = {};
+          for (const lane of LANES) byLane[lane] = inArea.filter((r) => r.__lane === lane);
+          const cells = LANES.map((lane) => {
+            const items = byLane[lane];
+            const extra = lane === "unknown" || lane === "proving"
+              ? (rec) => nextIds.has(rec["ID"]) ? "item--next" : ""
+              : () => "";
+            let inner;
+            if (items.length) {
+              inner = "<ul class=\"items\">" + items.map((r) => itemMarkup(r, extra(r))).join("") + "</ul>";
+            } else if (inArea.length === 0 && lane === "unknown") {
+              inner = "<span class=\"empty-mark\">empty</span><p class=\"coverage-note\">On the board so this area is not ignored. No client-visible items.</p>";
+            } else {
+              inner = "<span class=\"empty-mark\">empty</span>";
+            }
+            const emptyClass = items.length ? "" : " lane--empty";
+            return "<td class=\"lane" + emptyClass + "\" data-lane=\"" + lane + "\">" + inner + "</td>";
+          }).join("");
+          return "<tr data-area=\"" + escapeHtml(area) + "\"><th scope=\"row\" class=\"area\">" + escapeHtml(area) + "</th>" + cells + "</tr>";
+        }).join("");
+
+        const truthList = document.getElementById("truth-list");
+        const truthEmpty = document.getElementById("truth-empty");
+        if (truth.length) {
+          truthList.innerHTML = truth.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("");
+        } else {
+          truthEmpty.hidden = false;
+        }
+
+        const betList = document.getElementById("bet-list");
+        const betEmpty = document.getElementById("bet-empty");
+        if (bets.length) {
+          betList.innerHTML = bets.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("");
+        } else {
+          betEmpty.hidden = false;
+        }
+
+        document.getElementById("loop-event").innerHTML =
+          "<p>No change event is on this surface. The register is read here; nothing is taken in.</p>";
+        document.getElementById("loop-true").innerHTML = truth.length
+          ? "<ul>" + truth.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("") + "</ul>"
+          : "<p class=\"empty-mark\">empty</p><p>Nothing is Validated or Committed yet. That is the state, not a gap to fill.</p>";
+        document.getElementById("loop-next").innerHTML = gateItems.length
+          ? "<ul>" + gateItems.map((r) => "<li data-id=\"" + escapeHtml(r["ID"] || "") + "\">" + escapeHtml(r["Client label"]) + "</li>").join("") + "</ul>"
+          : "<p class=\"empty-mark\">empty</p>";
+        document.getElementById("loop-decision").innerHTML =
+          "<p>No decision is captured here. This is sight, not action.</p>";
+        document.getElementById("loop-informed").innerHTML =
+          "<p>Whoever can see this board. There is no dispatch layer.</p>";
+
+        const parkedList = document.getElementById("parked-list");
+        const parkedEmpty = document.getElementById("parked-empty");
+        const parkedNote = document.getElementById("parked-note");
+        if (parked.length) {
+          parkedList.innerHTML = parked.map((r) => {
+            const label = r["Client label"] === "" ? "no client label in register" : escapeHtml(r["Client label"]);
+            return "<li class=\"item\" data-client-item data-id=\"" + escapeHtml(r["ID"] || "") + "\" data-lane=\"parked\">" +
+              label + "<p class=\"coverage-note\">Parked. The register has no client-facing reason column; none is invented.</p></li>";
+          }).join("");
+        } else {
+          parkedEmpty.hidden = false;
+          parkedNote.textContent = "None parked. If a client-visible row is Parked, it appears here with a reason — never on the confidence axis as fake progress.";
+        }
+
+        banner.hidden = true;
+        app.hidden = false;
+        setView(viewFromHash());
+      })
+      .catch((err) => {
+        fail("Could not load " + SOURCE + " same-origin. Serve the repo root over HTTP. " + err.message);
+      });
+  </script>
+</body>
+</html>
