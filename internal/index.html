@@ -57,6 +57,16 @@
       padding-top: 4px;
     }
     .esoa-link:hover { color: var(--text); }
+    .esoa-link .pilot {
+      margin-left: 8px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 1px 6px;
+      font-weight: 400;
+    }
     .meta {
       display: flex;
       flex-wrap: wrap;
@@ -171,7 +181,8 @@
       <h1>Internal risk log</h1>
       <p>Read surface of the engagement register · not the client surface · not a write layer</p>
     </div>
-    <a class="esoa-link" href="../">ESOA</a>
+    <!-- PILOT ONLY: in production these are separate, access-controlled surfaces. -->
+    <a class="esoa-link" href="../">ESOA <span class="pilot">pilot</span></a>
   </header>
   <div class="meta" id="meta" hidden></div>
     <form class="filters" id="filters" hidden onsubmit="return false"></form>
