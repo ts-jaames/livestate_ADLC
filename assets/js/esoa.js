@@ -1,6 +1,6 @@
 /* Client ESOA — sight, not action. Reads register.csv same-origin.
-   Client view = Y and Client label only. Every item traces to an ID.
-   Does not write, capture, ingest, or decide. */
+   Client view = Y and Client label only for named items. Every item traces
+   to an ID. Does not write, capture, ingest, or decide. */
 
 import { mountFootingChart } from "./footing-chart.js";
 
@@ -13,6 +13,7 @@ const CONTRACT_COLUMNS = [
   "ID", "Area", "Risk", "Clarifying statement", "Type", "Collapse",
   "Uncertainty", "Test effort", "Priority cue", "Status", "Client view", "Client label"
 ];
+const BANDS = ["No footing", "Testing", "Partial", "Load-bearing"];
 
 const banner = document.getElementById("status-banner");
 const app = document.getElementById("app");
@@ -90,10 +91,28 @@ function isGating(rec) {
     && rec["Uncertainty"] === "High";
 }
 
+function derivedCue(rec) {
+  const collapse = rec["Collapse"];
+  const uncertainty = rec["Uncertainty"];
+  const effort = rec["Test effort"];
+  if (collapse === "High" && uncertainty === "High" && effort === "High") {
+    return "Cluster - decompose";
+  }
+  if (collapse === "High" && uncertainty === "High") return "Attack first";
+  return rec["Priority cue"];
+}
+
 function bandFor(pct, inTestCount) {
   if (pct === 100) return "Load-bearing";
   if (pct > 0) return "Partial";
   if (inTestCount > 0) return "Testing";
+  return "No footing";
+}
+
+function bandForStatus(status) {
+  if (status === "Committed") return "Load-bearing";
+  if (status === "Validated") return "Partial";
+  if (status === "In test") return "Testing";
   return "No footing";
 }
 
@@ -106,7 +125,7 @@ function confFor(band) {
 
 function renderRisks(host, rows) {
   if (!rows.length) {
-    host.innerHTML = "<p class=\"empty\">No load-bearing risks in the client view.</p>";
+    host.innerHTML = "<p class=\"empty\">Nothing is in front of us in the client view.</p>";
     return;
   }
   host.innerHTML = rows.map((r) => {
@@ -117,6 +136,49 @@ function renderRisks(host, rows) {
       "<span class=\"risk__tick\" aria-hidden=\"true\"></span>" +
       "<span class=\"risk__id\">" + escapeHtml(r["ID"] || "") + "</span>" +
       "<span>" + label + "</span></li>";
+  }).join("");
+}
+
+function renderCensus(records, front) {
+  const summary = document.getElementById("census-summary");
+  const host = document.getElementById("census");
+  const areas = [];
+  const byArea = {};
+  records.forEach((r) => {
+    const area = r["Area"];
+    if (!area) return;
+    if (!byArea[area]) {
+      byArea[area] = [];
+      areas.push(area);
+    }
+    byArea[area].push(r);
+  });
+  areas.sort(function (a, b) {
+    return a.localeCompare(b);
+  });
+
+  const frontAreas = {};
+  front.forEach((r) => {
+    if (r["Area"]) frontAreas[r["Area"]] = true;
+  });
+
+  summary.textContent = records.length + " risks mapped across " + areas.length +
+    " areas. " + front.length + " are in front of us now.";
+
+  host.innerHTML = areas.map((area) => {
+    const rows = byArea[area];
+    const counts = {};
+    BANDS.forEach((b) => { counts[b] = 0; });
+    rows.forEach((r) => { counts[bandForStatus(r["Status"])] += 1; });
+    const active = !!frontAreas[area];
+    const bands = BANDS.map((b) => escapeHtml(b) + " " + counts[b]).join(" · ");
+    return "<li class=\"census__row" + (active ? " is-active" : "") + "\">" +
+      "<div class=\"census__line\">" +
+      "<span class=\"census__area\">" + escapeHtml(area) + "</span>" +
+      "<span class=\"census__n\">" + rows.length + "</span>" +
+      "</div>" +
+      "<p class=\"census__bands\">" + bands + "</p>" +
+      "</li>";
   }).join("");
 }
 
@@ -168,7 +230,7 @@ function renderGate(cfg) {
     nameEl.classList.add("is-unset");
   }
   unlocksEl.textContent = unlocks
-    ? "Committing unlocks " + unlocks
+    ? "Unlocks — " + unlocks
     : "Unlocks — owner to set.";
 }
 
@@ -204,10 +266,11 @@ Promise.all([
   const records = recordsFromCsv(registerText, CONTRACT_COLUMNS);
   const client = records.filter((r) => r["Client view"] === "Y");
   const gating = client.filter(isGating);
+  const front = client.filter((r) => derivedCue(r) === "Attack first");
   const live = renderFooting(gating);
   renderGate(gateCfg);
-  renderRisks(document.getElementById("gate-risks"), gating);
-  renderRisks(document.getElementById("high-risks"), gating);
+  renderRisks(document.getElementById("front-risks"), front);
+  renderCensus(records, front);
   renderDecisions(recordsFromCsv(decisionsText));
   renderAsks(recordsFromCsv(asksText));
 
