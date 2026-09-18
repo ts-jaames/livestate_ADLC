@@ -103,6 +103,16 @@
       color: var(--ink-faint);
       max-width: 18ch;
     }
+    .nav__internal {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-faint);
+      text-decoration: none;
+    }
+    .nav__internal:hover { color: var(--accent); }
 
     .stage {
       min-width: 0;
@@ -334,6 +344,13 @@
       .nav__note { display: none; }
       .nav__act { padding: 6px 10px; border-left: 0; border-bottom: 1px solid transparent; }
       .nav__act.is-active { border-left-color: transparent; border-bottom-color: var(--accent); }
+      .nav__internal {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        margin-top: 0;
+        z-index: 4;
+      }
       .stage { padding: 28px 20px 64px; }
       .split, .loop, .gate__list { grid-template-columns: 1fr; }
       .loop__stage { border-right: 0; border-bottom: 1px solid var(--rule); padding: 16px 0; }
@@ -348,6 +365,7 @@
       <button type="button" class="nav__act" data-view="change">When something changes</button>
       <button type="button" class="nav__act" data-view="lasts">What lasts</button>
       <p class="nav__note">Surface of sight. Confidence, not a timeline. Not a place to decide.</p>
+      <a class="nav__internal" href="internal/">internal</a>
     </nav>
 
     <main class="stage">

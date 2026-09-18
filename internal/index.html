@@ -25,6 +25,10 @@
       line-height: 1.4;
     }
     header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
       padding: 20px 24px 12px;
       border-bottom: 1px solid var(--line);
       background: var(--head);
@@ -41,6 +45,18 @@
       font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
       font-size: 11px;
     }
+    .esoa-link {
+      font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      white-space: nowrap;
+      padding-top: 4px;
+    }
+    .esoa-link:hover { color: var(--text); }
     .meta {
       display: flex;
       flex-wrap: wrap;
@@ -151,8 +167,11 @@
 </head>
 <body>
   <header>
-    <h1>Internal risk log</h1>
-    <p>Read surface of the engagement register · not the client surface · not a write layer</p>
+    <div>
+      <h1>Internal risk log</h1>
+      <p>Read surface of the engagement register · not the client surface · not a write layer</p>
+    </div>
+    <a class="esoa-link" href="../">ESOA</a>
   </header>
   <div class="meta" id="meta" hidden></div>
     <form class="filters" id="filters" hidden onsubmit="return false"></form>
