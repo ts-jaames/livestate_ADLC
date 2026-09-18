@@ -12,4 +12,5 @@ fields are meant to be read. They are **not a second source of truth**.
 | File | What it is |
 | --- | --- |
 | `scales.md` | Collapse / Uncertainty / Test effort scale, and how `Priority cue` is derived. Static. |
+| `footing.md` | **PROVISIONAL** footing rubric (gated % and bands). Render; do not enshrine. |
 | _(owner-dropped)_ | Further definitions the owner adds over time. |
