@@ -1,0 +1,28 @@
+# SparqOS repo manifest — what each repo is the source of truth for.
+# Repos reference each other by published contract (a URL), never by merging.
+# Confidence-tagged: real | direction | not-built.
+
+repos:
+  - name: capability-model
+    owns: "Domains -> capabilities -> levels; intensity states"
+    source_of_truth: "YAML in repo"
+    contract: "https://<published-pages-or-raw-url>/capability-model.yaml   # TODO: fill in"
+    confidence: real
+
+  - name: sparqos-evidence          # this repo
+    owns: "Evidence Work kit (register + rules) + client progress experience"
+    source_of_truth: "data/register.csv + rules/"
+    contract: "data/register.csv"
+    confidence: real
+
+  - name: live-state
+    owns: "Per-engagement evidence substrate (central capture node)"
+    source_of_truth: "TBD"
+    contract: "TBD"
+    confidence: direction        # not built; do not wire
+
+  - name: spot
+    owns: "Cross-engagement retrieval / data lake"
+    source_of_truth: "TBD"
+    contract: "TBD"
+    confidence: direction        # not built; do not wire
