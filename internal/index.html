@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internal risk log</title>
+  <style>
+    :root {
+      --bg: #12110f;
+      --surface: #1c1b18;
+      --line: #2e2c28;
+      --text: #f2efe9;
+      --muted: #9a958c;
+      --accent: #e75437;
+      --accent-dim: rgba(231, 84, 55, 0.16);
+      --head: #0e0d0b;
+      --low: #7d9a7a;
+      --med: #c4a35a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+    body {
+      font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    header {
+      padding: 20px 24px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--head);
+    }
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 4px;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 11px;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 10px 24px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 11px;
+    }
+    .meta strong { color: var(--text); font-weight: 500; }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: end;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .filters label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .filters select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 5px 8px;
+      font: inherit;
+      min-width: 140px;
+    }
+    .filters button {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font: inherit;
+      cursor: pointer;
+      height: 28px;
+    }
+    .filters button:hover { color: var(--text); border-color: var(--muted); }
+    .wrap { overflow: auto; max-height: calc(100vh - 210px); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1400px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #161512;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      white-space: nowrap;
+      z-index: 1;
+    }
+    th.sortable button {
+      all: unset;
+      cursor: pointer;
+      color: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    th.sortable button:hover { color: var(--text); }
+    th.sortable[aria-sort="ascending"] button,
+    th.sortable[aria-sort="descending"] button { color: var(--text); }
+    .sort-ind { font-size: 9px; color: var(--accent); }
+    td.id {
+      font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 12px;
+      white-space: nowrap;
+      color: var(--accent);
+    }
+    td.risk, td.clarifying, td.client-label { max-width: 280px; }
+    .empty { color: var(--muted); }
+    .score-High { color: var(--accent); }
+    .score-Medium { color: var(--med); }
+    .score-Low { color: var(--low); }
+    .cue-attack { background: var(--accent-dim); }
+    .mismatch { text-decoration: underline dotted var(--muted); }
+    #status-banner {
+      padding: 24px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    }
+    #status-banner.error { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Internal risk log</h1>
+    <p>Read surface of the engagement register · not the client surface · not a write layer</p>
+  </header>
+  <div class="meta" id="meta" hidden></div>
+    <form class="filters" id="filters" hidden onsubmit="return false"></form>
+  <div id="status-banner">Loading <code>../data/register.csv</code>…</div>
+  <div class="wrap" hidden>
+    <table id="register">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    const SOURCE = "../data/register.csv";
+    const FILTER_KEYS = ["Area", "Type", "Collapse", "Uncertainty", "Test effort", "Priority cue", "Status"];
+    const CONTRACT_COLUMNS = [
+      "ID", "Area", "Risk", "Clarifying statement", "Type", "Collapse",
+      "Uncertainty", "Test effort", "Priority cue", "Status", "Client view", "Client label"
+    ];
+    const SCORE_RANK = { Low: 1, Medium: 2, High: 3 };
+    const STATUS_RANK = { Undefined: 1, "In test": 2, Validated: 3, Committed: 4, Parked: 5 };
+    const ALL = "__all__";
+    const EMPTY = "__empty__";
+
+    const wrap = document.querySelector(".wrap");
+    const banner = document.getElementById("status-banner");
+    const meta = document.getElementById("meta");
+    const filtersEl = document.getElementById("filters");
+    const thead = document.querySelector("#register thead");
+    const tbody = document.querySelector("#register tbody");
+
+    let headers = [];
+    let records = [];
+    let sortKey = null;
+    let sortDir = "asc";
+
+    function parseCSV(text) {
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; }
+            else inQuotes = false;
+          } else {
+            field += c;
+          }
+          continue;
+        }
+        if (c === '"') { inQuotes = true; continue; }
+        if (c === ",") { row.push(field); field = ""; continue; }
+        if (c === "\r") continue;
+        if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; continue; }
+        field += c;
+      }
+      if (field.length || row.length) {
+        row.push(field);
+        rows.push(row);
+      }
+      return rows.filter((r) => r.some((cell) => cell !== ""));
+    }
+
+    function derivedCue(row) {
+      const collapse = row["Collapse"];
+      const uncertainty = row["Uncertainty"];
+      const effort = row["Test effort"];
+      if (collapse === "High" && uncertainty === "High" && effort === "High") return "Cluster - decompose";
+      if (collapse === "High" && uncertainty === "High") return "Attack first";
+      return row["Priority cue"];
+    }
+
+    function cellKey(value) {
+      return value === "" ? EMPTY : value;
+    }
+
+    function uniqueValues(key) {
+      const seen = new Map();
+      for (const rec of records) {
+        const v = rec[key];
+        const k = cellKey(v);
+        if (!seen.has(k)) seen.set(k, v);
+      }
+      return [...seen.values()].sort((a, b) => {
+        if (a === "") return 1;
+        if (b === "") return -1;
+        if (key === "Collapse" || key === "Uncertainty" || key === "Test effort") {
+          return (SCORE_RANK[a] || 0) - (SCORE_RANK[b] || 0);
+        }
+        if (key === "Status") return (STATUS_RANK[a] || 99) - (STATUS_RANK[b] || 99);
+        return a.localeCompare(b, "en", { sensitivity: "base" });
+      });
+    }
+
+    function compare(a, b, key) {
+      const av = a[key] ?? "";
+      const bv = b[key] ?? "";
+      let cmp = 0;
+      if (key === "Collapse" || key === "Uncertainty" || key === "Test effort") {
+        cmp = (SCORE_RANK[av] || 0) - (SCORE_RANK[bv] || 0);
+      } else if (key === "Status") {
+        cmp = (STATUS_RANK[av] || 99) - (STATUS_RANK[bv] || 99);
+      } else {
+        cmp = String(av).localeCompare(String(bv), "en", { sensitivity: "base" });
+      }
+      if (cmp === 0) cmp = a.__index - b.__index;
+      return sortDir === "desc" ? -cmp : cmp;
+    }
+
+    function visibleRecords() {
+      const selected = {};
+      for (const key of FILTER_KEYS) {
+        const el = document.getElementById("filter-" + key);
+        selected[key] = el ? el.value : ALL;
+      }
+      let rows = records.filter((rec) => {
+        return FILTER_KEYS.every((key) => {
+          const want = selected[key];
+          if (want === ALL) return true;
+          if (want === EMPTY) return rec[key] === "";
+          return rec[key] === want;
+        });
+      });
+      if (sortKey) rows = rows.slice().sort((a, b) => compare(a, b, sortKey));
+      return rows;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function classFor(key, value) {
+      const classes = [];
+      if (key === "ID") classes.push("id");
+      if (key === "Risk") classes.push("risk");
+      if (key === "Clarifying statement") classes.push("clarifying");
+      if (key === "Client label") classes.push("client-label");
+      if (key === "Collapse" || key === "Uncertainty" || key === "Test effort") {
+        classes.push("score-" + value);
+      }
+      if (key === "Priority cue" && value === "Attack first") classes.push("cue-attack");
+      if (value === "") classes.push("empty");
+      return classes.join(" ");
+    }
+
+    function renderMeta(visible) {
+      const missing = records.filter((r) => !r["ID"]).length;
+      const mismatches = records.filter((r) => r["Priority cue"] !== r.__cueStored).length;
+      meta.hidden = false;
+      meta.innerHTML =
+        "<span>Source <strong>" + escapeHtml(SOURCE) + "</strong></span>" +
+        "<span>Register rows <strong id=\"row-count\">" + records.length + "</strong></span>" +
+        "<span>Showing <strong id=\"visible-count\">" + visible.length + "</strong></span>" +
+        "<span>IDs missing <strong id=\"missing-ids\">" + missing + "</strong></span>" +
+        "<span>Cue cells recomputed vs stored <strong id=\"cue-mismatches\">" + mismatches + "</strong></span>" +
+        "<span>Editing <strong>off</strong></span>";
+    }
+
+    function renderFilters() {
+      filtersEl.hidden = false;
+      filtersEl.innerHTML = FILTER_KEYS.map((key) => {
+        const opts = uniqueValues(key).map((v) => {
+          const label = v === "" ? "(empty)" : v;
+          return "<option value=\"" + escapeHtml(cellKey(v)) + "\">" + escapeHtml(label) + "</option>";
+        }).join("");
+        return "<label>" + escapeHtml(key) +
+          "<select id=\"filter-" + escapeHtml(key) + "\" data-filter=\"" + escapeHtml(key) + "\">" +
+          "<option value=\"" + ALL + "\">All</option>" + opts +
+          "</select></label>";
+      }).join("") + "<button type=\"button\" id=\"clear-filters\">Clear filters</button>";
+      filtersEl.querySelectorAll("select").forEach((el) => {
+        el.addEventListener("change", renderTable);
+      });
+      document.getElementById("clear-filters").addEventListener("click", () => {
+        filtersEl.querySelectorAll("select").forEach((el) => { el.value = ALL; });
+        sortKey = null;
+        sortDir = "asc";
+        renderTable();
+      });
+    }
+
+    function renderHead() {
+      thead.innerHTML = "<tr>" + headers.map((key) => {
+        const sortable = FILTER_KEYS.includes(key);
+        if (!sortable) return "<th scope=\"col\">" + escapeHtml(key) + "</th>";
+        let aria = "none";
+        let ind = "";
+        if (sortKey === key) {
+          aria = sortDir === "asc" ? "ascending" : "descending";
+          ind = "<span class=\"sort-ind\">" + (sortDir === "asc" ? "▲" : "▼") + "</span>";
+        }
+        return "<th scope=\"col\" class=\"sortable\" aria-sort=\"" + aria + "\">" +
+          "<button type=\"button\" data-sort=\"" + escapeHtml(key) + "\">" +
+          escapeHtml(key) + ind + "</button></th>";
+      }).join("") + "</tr>";
+      thead.querySelectorAll("button[data-sort]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.getAttribute("data-sort");
+          if (sortKey === key) sortDir = sortDir === "asc" ? "desc" : "asc";
+          else { sortKey = key; sortDir = "asc"; }
+          renderTable();
+        });
+      });
+    }
+
+    function renderTable() {
+      const visible = visibleRecords();
+      renderHead();
+      renderMeta(visible);
+      tbody.innerHTML = visible.map((rec) => {
+        const cells = headers.map((key) => {
+          const raw = rec[key] ?? "";
+          const display = raw === "" ? "" : escapeHtml(raw);
+          let title = "";
+          let extra = "";
+          if (key === "Priority cue" && rec.__cueStored !== rec["Priority cue"]) {
+            extra = " mismatch";
+            title = " title=\"Stored cell: " + escapeHtml(rec.__cueStored || "(empty)") + "\"";
+          }
+          return "<td class=\"" + classFor(key, raw) + extra + "\"" + title + ">" + display + "</td>";
+        }).join("");
+        return "<tr data-id=\"" + escapeHtml(rec["ID"] || "") + "\">" + cells + "</tr>";
+      }).join("");
+    }
+
+    function fail(message) {
+      banner.hidden = false;
+      banner.className = "error";
+      banner.textContent = message;
+    }
+
+    fetch(SOURCE)
+      .then((res) => {
+        if (!res.ok) throw new Error("HTTP " + res.status + " fetching " + SOURCE);
+        return res.text();
+      })
+      .then((text) => {
+        const rows = parseCSV(text);
+        if (!rows.length) throw new Error("Register parsed to zero rows.");
+        headers = rows[0];
+        const missingCols = CONTRACT_COLUMNS.filter((c) => !headers.includes(c));
+        if (missingCols.length) {
+          throw new Error("Register missing contracted columns: " + missingCols.join(", "));
+        }
+        records = rows.slice(1).map((cells, index) => {
+          const rec = { __index: index };
+          headers.forEach((h, i) => { rec[h] = cells[i] ?? ""; });
+          rec.__cueStored = rec["Priority cue"];
+          rec["Priority cue"] = derivedCue(rec);
+          return rec;
+        });
+        banner.hidden = true;
+        wrap.hidden = false;
+        renderFilters();
+        renderTable();
+      })
+      .catch((err) => {
+        fail("Could not load " + SOURCE + " same-origin. Serve the repo root over HTTP. " + err.message);
+      });
+  </script>
+</body>
+</html>
