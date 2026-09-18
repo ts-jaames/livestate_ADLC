@@ -84,7 +84,7 @@ a { color: var(--accent); }
 .stage {
   max-width: 52rem;
   margin: 0 auto;
-  padding: 48px 32px 180px;
+  padding: 48px 32px 220px;
 }
 
 .section {
@@ -491,7 +491,8 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
 
 .hop a:hover { color: var(--accent); }
 
-/* ── Disabled chat (signpost only) ── */
+/* ── Disabled chat (signpost only) ──
+   Composer chrome, not a working input. Nothing is wired. */
 
 .chat-soon {
   position: fixed;
@@ -500,23 +501,66 @@ body[data-conf="rebuilding"] .orb[data-orb-when="conf-rebuilding"] { opacity: 1;
   transform: translateX(-50%);
   z-index: 20;
   width: min(52rem, calc(100% - 32px));
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 18px 20px 14px;
+  background: #242424;
+  color: var(--ink-faint);
+  border: 1px solid rgba(237, 234, 228, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   pointer-events: none;
-}
-
-.chat-soon input {
-  width: 100%;
-  appearance: none;
-  background: #161616;
-  color: var(--ink-faint);
-  border: 1px solid var(--rule);
-  padding: 12px 14px;
-  font-family: var(--font-sans);
-  font-size: 13px;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-.chat-soon input::placeholder {
-  color: var(--ink-faint);
-  letter-spacing: 0.02em;
+.chat-soon__prompt {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(237, 234, 228, 0.42);
+}
+
+.chat-soon__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-soon__grow { flex: 1; }
+
+.chat-soon__icon {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: 0;
+  color: rgba(237, 234, 228, 0.55);
+  cursor: not-allowed;
+}
+
+.chat-soon__icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.chat-soon__picks {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-right: 4px;
+  font-size: 13px;
+  color: rgba(237, 234, 228, 0.50);
+}
+
+.chat-soon__picks span:last-child {
+  color: rgba(237, 234, 228, 0.38);
 }

@@ -81,11 +81,35 @@
   </main>
 
   <!-- Disabled placeholder. No input handling, no API, no send.
-       Signpost for a later constrained reader — not a working feature. -->
-  <form class="chat-soon" aria-disabled="true" onsubmit="return false">
-    <label class="sr-only" for="chat-soon">Query</label>
-    <input id="chat-soon" type="text" disabled placeholder="coming soon" tabindex="-1" autocomplete="off">
-  </form>
+       Signpost for a later constrained reader — not a working feature.
+       Chrome mimics a composer (plus / mic / voice); nothing is wired. -->
+  <div class="chat-soon" role="note" aria-disabled="true" aria-label="Query coming soon">
+    <p class="chat-soon__prompt">Write a message…</p>
+    <div class="chat-soon__bar">
+      <button type="button" class="chat-soon__icon" disabled tabindex="-1" aria-label="Attach">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <span class="chat-soon__grow"></span>
+      <span class="chat-soon__picks" aria-hidden="true">
+        <span>coming</span>
+        <span>soon</span>
+      </span>
+      <button type="button" class="chat-soon__icon" disabled tabindex="-1" aria-label="Voice">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="9" y="3.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M6.5 11.5a5.5 5.5 0 0 0 11 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 17v3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button type="button" class="chat-soon__icon" disabled tabindex="-1" aria-label="Dictation">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4.5 10v4M8.5 7.5v9M12 5v14M15.5 7.5v9M19.5 10v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
   <script type="module" src="assets/js/orbs.js"></script>
   <script type="module" src="assets/js/esoa.js"></script>
