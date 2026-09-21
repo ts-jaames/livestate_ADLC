@@ -3,6 +3,9 @@
 Ratified definitions. These are structural, not marketing language — don't paraphrase them into
 something looser when explaining them to someone.
 
+Drafts may *translate* a term for a reader in the same sentence. This file is still the meaning.
+Do not water down the glossary to match a plainer draft.
+
 ## Core terms
 
 **Evidence Work** — The continuous discipline of reducing product uncertainty through measurable

@@ -1,6 +1,6 @@
 {
   "gate": "Define",
-  "unlocks": "",
-  "provisional": true,
-  "owner_to_set": ["unlocks"]
+  "unlocks": "Run. Clearing Define is what opens that gate.",
+  "evidence_ids": ["M1", "M2", "M3", "M5", "G5", "M6", "RC5"],
+  "provisional": true
 }
