@@ -88,6 +88,19 @@ function currentGateName(cfg) {
   return String((cfg && cfg.gate) || "").trim();
 }
 
+function evidenceWorkRows(records, cfg) {
+  const raw = cfg && cfg.evidence_ids;
+  if (!Array.isArray(raw) || !raw.length) return [];
+  const byId = {};
+  records.forEach((r) => {
+    const id = String(r["ID"] || "").trim();
+    if (id) byId[id] = r;
+  });
+  return raw.map(function (id) {
+    return byId[String(id).trim()];
+  }).filter(Boolean);
+}
+
 function countsTowardFooting(status) {
   return status === "Validated" || status === "Committed";
 }
@@ -136,7 +149,7 @@ function confFor(band) {
 
 function renderRisks(host, rows) {
   if (!rows.length) {
-    host.innerHTML = "<p class=\"empty\">Nothing is in front of us.</p>";
+    host.innerHTML = "<p class=\"empty\">Nothing is in evidence work on this gate.</p>";
     return;
   }
   host.innerHTML = rows.map((r) => {
@@ -251,7 +264,7 @@ function renderGate(cfg) {
     nameEl.classList.add("is-unset");
   }
   unlocksEl.textContent = unlocks
-    ? "Unlocks — " + unlocks
+    ? "Unlocks " + unlocks
     : "Unlocks — owner to set.";
 }
 
@@ -290,9 +303,7 @@ Promise.all([
   const gating = currentGate
     ? client.filter((r) => sameGate(r["Gate"], currentGate))
     : [];
-  const front = currentGate
-    ? records.filter((r) => sameGate(r["Gate"], currentGate)).slice().sort(byAttackOrder)
-    : [];
+  const front = evidenceWorkRows(records, gateCfg);
   const live = renderFooting(gating);
   renderGate(gateCfg);
   renderRisks(document.getElementById("front-risks"), front);

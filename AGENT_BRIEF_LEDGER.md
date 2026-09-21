@@ -95,6 +95,10 @@ Decision: _awaiting human review_
 `draft` | `framing-reviewed` | `ready-to-run` | `signal-captured` | `decided`
 ```
 
+Headers and field names stay exactly as above. The sentences under them follow the skill's
+**Output voice**: plain, short, same bars and counts. A non-technical reviewer should be able
+to digest the draft on Files changed without a glossary open.
+
 The `Suggested read` line is the only place you're allowed to editorialize about confidence. Label
 it exactly as shown. Never write into the `Decision` line yourself, under any status.
 

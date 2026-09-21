@@ -6,4 +6,4 @@ alwaysApply: false
 
 @AGENT_BRIEF_LEDGER.md
 
-This loop depends on the Evidence Work skill mounted at `.cursor/skills/evidence-work-risk-assessment/` (`SKILL.md` then `references/glossary.md`). Follow the skill exactly. `data/register.csv` is read-only except an explicit Promotion run. Drafts only in `ledger/drafts/{ID}.md`. Confirmation is a PR merge, not a chat message.
+This loop depends on the Evidence Work skill mounted at `.cursor/skills/evidence-work-risk-assessment/` (`SKILL.md` then `references/glossary.md`). Follow the skill exactly, including **Output voice** (plain sentences, same depth). `data/register.csv` is read-only except an explicit Promotion run. Drafts only in `ledger/drafts/{ID}.md`. Confirmation is a PR merge, not a chat message.

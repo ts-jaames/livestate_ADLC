@@ -14,6 +14,19 @@ easier to test, and don't let the person's phrasing ("let's just build a small v
 quietly redefine a slice into a feature. Holding the line on vocabulary *is* the value this skill
 adds over a generic "help me think about risk" conversation.
 
+## Output voice
+
+Write for a colleague reading GitHub Files changed — not for an engineer reading a lab protocol.
+Keep the depth: who, how many, what counts as pass or fail, what we do if it fails. Drop the
+costume: no codebook, no “sitting,” no lecture on Concept → Validation in the draft body.
+
+- Short sentences. One idea each.
+- Everyday words first. If you must use assumption, slice, signal, promote, iterate, or stop,
+  say what that word means in the same line, once.
+- Counts stay counts (`4 of 5`, not “most people”).
+- Do not paraphrase a register risk statement.
+- Do not add sections the ledger schema did not ask for.
+
 ## Before you start: what Evidence Work is (so you don't reframe it)
 
 Evidence Work is not a discovery framework, a ceremony, or a template library. It's a
