@@ -1,0 +1,9 @@
+---
+description: Ledger framing loop — drafts in ledger/drafts from named register IDs. Use when framing risks, writing Assumption/Slice/Signal drafts, ledger PRs, promotion from decided drafts, or AGENT_BRIEF_LEDGER.md. Does not govern the client ESOA.
+globs: ledger/**,AGENT_BRIEF_LEDGER.md,.cursor/skills/evidence-work-risk-assessment/**
+alwaysApply: false
+---
+
+@AGENT_BRIEF_LEDGER.md
+
+This loop depends on the Evidence Work skill mounted at `.cursor/skills/evidence-work-risk-assessment/` (`SKILL.md` then `references/glossary.md`). Follow the skill exactly. `data/register.csv` is read-only except an explicit Promotion run. Drafts only in `ledger/drafts/{ID}.md`. Confirmation is a PR merge, not a chat message.
