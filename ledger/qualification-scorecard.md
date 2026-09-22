@@ -4,7 +4,7 @@ Paper test of every row in `data/register.csv` (51 rows). Date: 2026-09-22.
 
 This file is **not** the register. It does not change Collapse, Uncertainty, Status, or Client view. Confirmation is a PR merge, not a chat message.
 
-## The test (not a vibe)
+## The test 
 
 1. **Uncertainty with consequence** — Are we behaving as if X is true without having proven it? If it is just work to do → task, not a risk.
 2. **Material consequence** — If wrong, does it collapse a capability, force a rebuild, move cost in a real way, or get expensive to undo? If no → normal planning, not Evidence Mode.
